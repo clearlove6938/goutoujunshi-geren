@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>悬浮窗排障图文卡 · 狗头军师 Jev Chat 安卓版</title>
+<style>
+  :root{--ink:#2C2C2A;--sub:#5F5E5A;--line:#D3D1C7;--bg:#F7F6F2;--card:#FFFFFF;--green:#0F6E56;--green-bg:#E1F5EE;--red:#A32D2D;--red-bg:#FCEBEB;--amber:#854F0B;--amber-bg:#FAEEDA}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.75;font-size:15px}
+  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:28px}
+  .kicker{font-size:12px;letter-spacing:.12em;color:var(--green);font-weight:600}
+  h1{font-size:26px;line-height:1.4;margin:10px 0 8px;font-weight:600}
+  .lead{color:var(--sub);margin:0;font-size:14px}
+  h2{font-size:19px;margin:0 0 4px;font-weight:600}
+  h3{font-size:15px;margin:22px 0 8px;font-weight:600}
+  p{margin:10px 0}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin:20px 0}
+  .num{display:inline-flex;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;align-items:center;justify-content:center;font-size:14px;font-weight:600;margin-right:10px;vertical-align:middle}
+  .figure{margin:18px 0;border:1px solid var(--line);border-radius:10px;background:#FCFCFA;padding:12px}
+  .figure svg{display:block;width:100%;height:auto}
+  .cap{font-size:12px;color:var(--sub);margin-top:8px;text-align:center}
+  .note{border-left:3px solid var(--amber);background:var(--amber-bg);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;margin:14px 0}
+  .warn{border-left:3px solid var(--red);background:var(--red-bg);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;margin:14px 0}
+  .ok{border-left:3px solid var(--green);background:var(--green-bg);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;margin:14px 0}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#F1EFE8;font-weight:600}
+  ul,ol{margin:10px 0;padding-left:22px}
+  li{margin:7px 0}
+  code.inline{background:#F1EFE8;padding:1px 6px;border-radius:4px;font-size:13px;font-family:Consolas,monospace}
+  .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:20px;background:var(--green-bg);color:var(--green);font-weight:600;margin-left:6px}
+  .tag.red{background:var(--red-bg);color:var(--red)}
+  footer{border-top:1px solid var(--line);margin-top:32px;padding-top:20px;color:var(--sub);font-size:13px}
+  @media(max-width:600px){.wrap{padding:20px 14px 60px}h1{font-size:22px}section{padding:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">GOUTOUJUNSHI · JEV CHAT · 安卓排障</div>
+  <h1>首页全绿、助手已开启，为什么还是没有悬浮球</h1>
+  <p class="lead">已定位到代码层原因，并已修好源码。这张卡先让你用 30 秒确认现象，再给手机上立刻能做的动作。</p>
+</header>
+
+<section>
+  <h2><span class="num">0</span>先说结论</h2>
+  <p>首页那三项（无障碍权限、悬浮窗权限、密钥）只检查<strong>「能不能显示」</strong>，完全不检查<strong>「有没有触发显示」</strong>。所以三项全绿和「球没出现」并不矛盾。</p>
+  <p>真正的开关在下一层：无障碍服务收到窗口事件后，会去读当前聊天窗口的控件树。<strong>QQ 属于「已适配应用」，读不出来时旧代码直接 <code class="inline">return</code>，既不显示球也不报错</strong>——这就成了你现在看到的样子。</p>
+  <div class="warn"><strong>为什么偏偏是 QQ：</strong>QQ 适配器靠三个写死的控件 ID 认页面（<code class="inline">id/mjn</code> 气泡、<code class="inline">id/371</code> 标题、<code class="inline">id/input</code> 输入框）。新版 QQ、群聊页、以及一加/OPPO 系统对无障碍节点的限制，都可能让这三个 ID 失效。而<strong>不适配的普通 App 反而有兜底会显示球</strong>，所以这是一个很反直觉的现象。</div>
+
+  <div class="figure">
+    <svg viewBox="0 0 800 300" xmlns="http://www.w3.org/2000/svg" font-family="-apple-system,Segoe UI,PingFang SC,Microsoft YaHei,sans-serif">
+      <rect x="250" y="14" width="300" height="58" rx="10" fill="#E1F5EE" stroke="#0F6E56" stroke-width="2"/>
+      <text x="400" y="38" text-anchor="middle" font-size="15" font-weight="600" fill="#0F6E56">30 秒自测</text>
+      <text x="400" y="59" text-anchor="middle" font-size="12" fill="#2C2C2A">切到浏览器 / 短信 / 备忘录（不要 QQ、微信、桌面）</text>
+
+      <path d="M400 72 L400 96 L180 96 L180 120" fill="none" stroke="#888" stroke-width="2"/>
+      <path d="M400 72 L400 96 L620 96 L620 120" fill="none" stroke="#888" stroke-width="2"/>
+      <polygon points="180,120 174,110 186,110" fill="#888"/>
+      <polygon points="620,120 614,110 626,110" fill="#888"/>
+
+      <rect x="30" y="122" width="300" height="76" rx="10" fill="#FFFFFF" stroke="#0F6E56" stroke-width="2"/>
+      <text x="180" y="148" text-anchor="middle" font-size="14" font-weight="600" fill="#0F6E56">球出现了</text>
+      <text x="180" y="170" text-anchor="middle" font-size="12" fill="#5F5E5A">权限 / 服务 / 开关全部正常</text>
+      <text x="180" y="188" text-anchor="middle" font-size="12" fill="#5F5E5A">→ 是 QQ 控件树识别失效</text>
+
+      <rect x="470" y="122" width="300" height="76" rx="10" fill="#FFFFFF" stroke="#A32D2D" stroke-width="2"/>
+      <text x="620" y="148" text-anchor="middle" font-size="14" font-weight="600" fill="#A32D2D">球还是没有</text>
+      <text x="620" y="170" text-anchor="middle" font-size="12" fill="#5F5E5A">服务没绑定 / 被系统冻结</text>
+      <text x="620" y="188" text-anchor="middle" font-size="12" fill="#5F5E5A">→ 走第 2 节重绑流程</text>
+
+      <path d="M180 198 L180 226" fill="none" stroke="#888" stroke-width="2"/>
+      <path d="M620 198 L620 226" fill="none" stroke="#888" stroke-width="2"/>
+      <polygon points="180,226 174,216 186,216" fill="#888"/>
+      <polygon points="620,226 614,216 626,216" fill="#888"/>
+
+      <rect x="30" y="228" width="300" height="58" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="1.5"/>
+      <text x="180" y="252" text-anchor="middle" font-size="12" font-weight="600" fill="#854F0B">临时：清空白名单 + 开 OCR 兜底</text>
+      <text x="180" y="272" text-anchor="middle" font-size="12" fill="#2C2C2A">彻底修好：装新 APK（源码已修）</text>
+
+      <rect x="470" y="228" width="300" height="58" rx="10" fill="#FAEEDA" stroke="#854F0B" stroke-width="1.5"/>
+      <text x="620" y="252" text-anchor="middle" font-size="12" font-weight="600" fill="#854F0B">关→强停→开无障碍，再切回聊天</text>
+      <text x="620" y="272" text-anchor="middle" font-size="12" fill="#2C2C2A">并关掉电池优化 / 允许后台运行</text>
+    </svg>
+    <div class="cap">先做自测，两条分支的处理完全不同，不要跳步</div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">1</span>别的 App 有球 → 设置页先查这 3 项</h2>
+  <p>打开 App → <strong>设置</strong>，滑到「分析」那一块，逐项确认，然后<strong>滑到最底部点「保存全部设置」</strong>：</p>
+  <table>
+    <tr><th>项目</th><th>改成</th><th>为什么</th></tr>
+    <tr><td>会话白名单（每行一个关键词）</td><td><strong>整框清空</strong></td><td>只要这里非空，标题读不出来的会话会被判为「不允许」，代码会<strong>主动把球隐藏</strong>。这是唯一一个用户设置能直接把球关掉的开关。</td></tr>
+    <tr><td>树读不到正文时用 OCR 兜底</td><td><strong>打开</strong></td><td>控件树读不到文字时改走截屏识别，不再空手返回。</td></tr>
+    <tr><td>悬浮球菜单里的「隐藏助手（本次）」</td><td>别点</td><td>点了之后要重进聊天窗口才会重新出现；不确定就按第 2 节重绑一次。</td></tr>
+  </table>
+  <div class="note">再试一次：进 QQ <strong>单聊</strong>（群聊更容易识别失败）→ 按 Home 回桌面 → 再切回 QQ。这一步是为了触发一次新的 <code class="inline">TYPE_WINDOW_STATE_CHANGED</code> 事件，服务靠它决定要不要显示球。</div>
+  <div class="ok"><strong>只要旧 APK 上球能出来</strong>，长按球 →「截屏识别一次」→ 核对原文 → 分析，就能绕开失效的 QQ 控件 ID 完整跑通一轮。识别方式可先用「ML Kit 本地」，不耗接口额度。</div>
+  <div class="warn">如果这几步做完，QQ 里仍然始终没球，那就必须装修复版 APK —— 旧包的 <code class="inline">extract() == null → return</code> 是硬伤，设置改不出来。</div>
+</section>
+
+<section>
+  <h2><span class="num">2</span>别的 App 也没球 → 强制重新绑定服务</h2>
+  <p>一加 / OPPO（ColorOS、OPlus）会把无障碍服务冻结，开关显示「已开启」但服务进程没在收事件。按顺序做：</p>
+  <ol>
+    <li>系统设置 → 无障碍 → 找到「狗头军师 Jev Chat」（描述是「读取当前聊天窗口文字，用于生成回复建议」）→ <strong>关闭</strong>。</li>
+    <li>系统设置 → 应用管理 → 狗头军师 Jev Chat → <strong>强制停止</strong>。</li>
+    <li>回到无障碍 → <strong>重新打开</strong>该服务，弹窗确认。</li>
+    <li>打开 App，确认首页「助手已开启」仍是开；然后切到任意普通 App，看球是否出现。</li>
+  </ol>
+  <div class="note">还要在应用管理里补两处：<strong>电池优化设为「不优化 / 允许后台运行」</strong>、<strong>自启动允许</strong>。悬浮窗权限在系统设置里显示「已允许」后，最好也关一次再开一次，让 <code class="inline">canDrawOverlays()</code> 重新返回 true。</div>
+  <p>顺带修掉的一个隐患：悬浮球坐标以前只校验了 X 上界、没校验 Y 上界。换过横竖屏或分辨率后，保存的位置可能把球画到屏幕外，看起来和「完全没有悬浮窗」一模一样。新包会把超界位置回落到默认值。</p>
+</section>
+
+<section>
+  <h2><span class="num">3</span>源码已经改了什么 <span class="tag">本地已完成</span></h2>
+  <p>核心思路：<strong>「已适配应用读不出控件树」不应该把球拿走</strong>——球是「截屏识别一次」的唯一入口，球没了这条路就断了。原代码只对<em>不适配</em>的应用写了这个兜底，已适配的反而漏了，现在补齐。</p>
+  <table>
+    <tr><th>文件</th><th>改动</th></tr>
+    <tr><td><code class="inline">ChatCaptureService.kt</code></td><td>新增 <code class="inline">shouldParkIdleBubble()</code> 纯函数与 <code class="inline">parkIdleBubble()</code>；在「窗口切换时」「adapter.extract() 返回 null」「识别出聊天窗口但无正文」三处补上 idle 球；节点树拿不到时改用事件包名兜底，且不拿它去做 hide / cancel。</td></tr>
+    <tr><td><code class="inline">OverlayController.kt</code></td><td><code class="inline">ensureRoot()</code> 给悬浮球 Y 坐标加上界，超界回落到默认位置。</td></tr>
+    <tr><td><code class="inline">ChatCaptureServiceTest.kt</code></td><td>新增 3 个 Kotlin 单测：QQ / 飞书 / X 读不出树时仍应有球；自身界面、微信、桌面、系统 UI 不应补球；已有的球不被 idle 覆盖。</td></tr>
+  </table>
+  <div class="ok">本地验证：Python 全套 <strong>181 tests OK</strong>；<code class="inline">validate_skill.py passed</code>；提交 <code class="inline">8100b32</code>；离线 bundle 已重建并 <code class="inline">bundle verify</code> 通过（16 MB，完整历史）。Kotlin 编译由 GitHub Actions 验证。</div>
+  <div class="ok"><strong>已连续四次出包 <span class="tag">最新：说话人修正版</span></strong><br>
+  本机 git 端点被阻断，四次都走 <code class="inline">api.github.com</code> 的 REST Git Data API 增量推送：
+  首版 <code class="inline">223473d0</code>（run #3）→ 悬浮球修复 <code class="inline">e2a1ef88</code>（run #4）
+  → 常驻开关 <code class="inline">3c54e8c4</code>（run #5）
+  → <strong>说话人归属 <code class="inline">cdccbe8d</code></strong>（run #6，BUILD SUCCESSFUL 2m04s）。
+  四次 CI 日志都确认 <code class="inline">:app:testDebugUnitTest</code> 已执行。<br>
+  最新交付：<strong>狗头军师-说话人修正版.apk</strong>（27.2 MB / 28,505,467 bytes，SHA256 <code class="inline">f9ee19af02e674c…</code>）。
+  包内核验：<code class="inline">classes3/5/6.dex</code> 三个 dex 变化，<code class="inline">ocrLineIsMine</code> 已编入
+  <code class="inline">classes6.dex</code>；51 个 Skill 资源、6 场景、6000 字预算保持不变。</div>
+</section>
+
+<section>
+  <h2><span class="num">4</span>装到手机：必须先卸载旧版</h2>
+  <div class="warn"><strong>不要直接覆盖安装。</strong>四次 CI 都在全新 runner 上生成各自的 debug keystore，v2 签名证书依次是 <code class="inline">67ec51c7…</code> → <code class="inline">c9d665ef…</code> → <code class="inline">9cefeed9…</code> → <code class="inline">d057eed3…</code>（最新），<strong>两两不同</strong>。直接覆盖会提示「应用未安装 / 签名冲突」，项目 Release 说明也写了这条。换句话说：<strong>每次换包都要先卸载，也都会丢一次本地设置；如果还没装旧版，直接装最新这一版就行，中间版本可以跳过。</strong></div>
+  <p>按顺序做：</p>
+  <ol>
+    <li><strong>先记下设置</strong>：设置页里的三处接口地址、模型名、API Key、会话白名单、关系描述。卸载会清空本地数据（密钥、常驻笔记、联系人档案都会没）。</li>
+    <li>系统设置 → 应用管理 →「狗头军师 Jev Chat」→ <strong>卸载</strong>。</li>
+    <li>把 <strong>狗头军师-说话人修正版.apk</strong> 传到手机安装，允许「安装未知来源应用」。</li>
+    <li>重新开三项权限：无障碍、悬浮窗，并把刚才记下的 API 配置填回去 → <strong>保存全部设置</strong>。</li>
+    <li>设置 → 外观 → 打开<strong>「悬浮球常驻（任何界面都不自动隐藏）」</strong> → 再点一次「保存全部设置」。</li>
+    <li>按第 0 节的 30 秒自测：先切到浏览器看球，再进 QQ 群看球；常驻开启后连桌面都该有球。</li>
+  </ol>
+  <div class="note">要求 <strong>Android 11+、ARM64</strong>（包内只有 arm64-v8a）。新包同时保留「使用完整狗头军师 Skill」开关，默认关闭，按需开启。</div>
+</section>
+
+<section>
+  <h2><span class="num">5</span>顺带确认：策略失败那次</h2>
+  <p>之前截图里模型名填的是 <code class="inline">deepseek-flashsk</code>，末尾多了 <code class="inline">sk</code>。客户端会把这个字段<strong>原样</strong>当作 <code class="inline">model</code> 发给接口，服务端不认识就报错，而错误被统一显示成「请检查模型、密钥和网络」，所以看不出是拼写问题。正确值是 <code class="inline">deepseek-flash</code>，改完点「测试策略判断」，再保存全部设置。</p>
+  <div class="note">这一项和悬浮球无关：悬浮球由无障碍服务绘制，不调用任何模型接口，API 没配好也照样应该有球。两件事分开修，不要互相等。</div>
+</section>
+
+<section>
+  <h2><span class="num">6</span>「悬浮球常驻」开关与保活</h2>
+  <div class="ok"><strong>常驻开关已做好 <span class="tag">常驻版 APK 已出包</span></strong><br>
+  最新版 <strong>狗头军师-说话人修正版.apk</strong>（含常驻开关）在「设置 → 外观」最上方保留了
+  <strong>「悬浮球常驻（任何界面都不自动隐藏）」</strong>，<strong>默认关闭</strong>。
+  打开后桌面、系统界面、本 App 设置页、微信里都不再自动收球；白名单不匹配的会话只跳过分析、不收球。
+  首页「助手已开启」总开关仍是最高优先级，关掉它球一定会消失。
+  微信里虽然会显示球，但这一版仍无法截取微信聊天画面。</div>
+  <p>「常驻」要分开看两件事：</p>
+  <table>
+    <tr><th></th><th>现状</th><th>你要做什么</th></tr>
+    <tr><td><strong>进程常驻</strong><br>服务别被系统冻结</td><td><strong>代码里已有。</strong><code class="inline">KeepAliveService</code> 是常驻前台服务，无障碍服务一绑定就启动，通知栏会有一条「狗头军师运行中」（ongoing、最低重要性）。服务被杀重连后 900ms 会主动把球补回来。</td><td>代码注释明说「不是完整方案」：<strong>必须再给系统权限</strong>，见下面清单。</td></tr>
+    <tr><td><strong>球一直显示</strong><br>任何界面都不消失</td><td><strong>需装常驻版并打开开关。</strong>默认仍是「按需隐藏」：桌面、系统 UI、App 自己的页面、微信界面会主动把球收起来；开关打开后这些隐藏分支全部跳过。</td><td>装新 APK → 设置 → 外观 → 打开开关 → 滑到底<strong>「保存全部设置」</strong>。</td></tr>
+  </table>
+  <div class="note">实现要点：新增 <code class="inline">Prefs.bubbleAlwaysOn</code>（默认 false），传给纯函数 <code class="inline">shouldParkIdleBubble(..., alwaysOn)</code>；常驻时窗口 drop 列表、白名单 hide、未适配 App 的排除条件都会被绕过。<strong>总开关关闭</strong>与<strong>服务销毁时清理 window</strong> 这两处 hide 特意保留，避免留下幽灵悬浮窗。</div>
+
+  <h3>让保活真正生效（一加 / OPPO 必做）</h3>
+  <ol>
+    <li>应用管理 → 狗头军师 Jev Chat → <strong>耗电管理：允许后台运行 / 关闭「智能省电」</strong>；电池优化设为<strong>不优化</strong>。</li>
+    <li>打开<strong>自启动</strong>，并允许<strong>关联启动</strong>。</li>
+    <li>多任务列表里把 App 卡片<strong>下拉锁定</strong>（加锁图标），一键清理时别被划掉。</li>
+    <li><strong>不要禁用通知</strong>，也不要把「狗头军师运行中」那条通知关掉——前台服务靠它维持进程优先级。它是最低重要性的静默通知，不会响。</li>
+    <li>无障碍开关保持开启：开机后系统会重新绑定无障碍服务，球会自己回来，不用每次手动开 App。</li>
+  </ol>
+  <div class="note">如果锁屏一会儿回来球没了，通常就是第 1、3 条没给：系统把进程冻了，无障碍服务被解绑。按第 2 节的「关无障碍 → 强停 → 重开」能立刻恢复，但想不复发还得给权限。</div>
+
+  <h3>默认（常驻关闭）下球会消失的 5 种情况</h3>
+  <div class="note">打开常驻开关后，下表<strong>前 3 条不再收球</strong>；后 2 条（总开关关闭、服务被解绑）仍然会，这是安全边界，不是 bug。</div>
+  <table>
+    <tr><th>情况</th><th>怎么回来</th></tr>
+    <tr><td>切到<strong>桌面 / 系统 UI / App 自己的设置页 / 微信</strong></td><td>切回聊天窗口自动出现；微信是这一版明确不支持的。</td></tr>
+    <tr><td>点了悬浮球菜单里的<strong>「隐藏助手（本次）」</strong></td><td>「本次」= 当前窗口，切到别的 App 再切回来即可。</td></tr>
+    <tr><td><strong>会话白名单</strong>非空且当前标题不匹配</td><td>清空白名单，或把该会话标题加进去；改完记得保存全部设置。</td></tr>
+    <tr><td>首页<strong>「助手已开启」</strong>被关掉</td><td>重新打开总开关（会触发一次重新补球）。</td></tr>
+    <tr><td>无障碍服务被系统解绑 / 进程被冻</td><td>按上面权限清单 + 第 2 节重绑流程。</td></tr>
+  </table>
+  <div class="warn">注意：知识库里那个<strong>「常驻（每次分析都带上）」是笔记的开关</strong>，指的是每轮分析都注入这条笔记，和悬浮球没有关系，别找错地方。</div>
+</section>
+
+<section>
+  <h2><span class="num">7</span>识别结果把「我」的话全算成「对方」</h2>
+  <div class="ok"><strong>现在就能解决，不用换包：核对页是可以编辑的。</strong><br>
+  长按悬浮球 →「截屏识别一次」→ 弹出的<strong>「核对本轮对话」文本框可以直接改字</strong>。
+  把属于你发的那几行开头的 <code class="inline">对方：</code> 改成 <code class="inline">我：</code>，
+  其余保持 <code class="inline">对方：</code>，再点<strong>「确认原文并分析」</strong>。
+  全角／半角冒号都认。这一步不是可选的装饰——项目本来就要求人工核对说话人，确认后才会调用分析模型。</div>
+
+  <h3>为什么会全归「对方」</h3>
+  <p>默认识图方式是 <strong>ML Kit 本地 OCR</strong>。它拿到的是「一整屏的文字行 + 每行坐标」，<strong>没有气泡边框</strong>，所以旧版代码在 <code class="inline">groupOcrLines()</code> 里把每一组都硬写成 <code class="inline">Msg("other", ...)</code>。源码注释和面板提示都直说了：<code class="inline">OCR_NOTE = "OCR 未分边，把全部消息当作对方所说"</code>。这不是模型认错，是根本没做分边。</p>
+  <p>完整因果链：<strong>QQ 控件 ID 失效 → 控件树读不到 → 走 OCR 兜底 → 平面读屏判不了左右 → 全部记为对方</strong>。所以前面「QQ 里没球」和这个问题是同一条链上的两环。</p>
+  <p>如果切到了「视觉模型（DeepSeek 等）」，旧版 prompt 只说「格式 我：／对方：」，<strong>完全没告诉模型怎么区分左右</strong>，模型也只能靠猜；而且解析时只认全角冒号，模型一旦输出 <code class="inline">我: xxx</code> 或带 <code class="inline">-</code> 前缀，整行会被静默丢掉。</p>
+
+  <h3>新版改了什么</h3>
+  <table>
+    <tr><th>路径</th><th>修复</th></tr>
+    <tr><td>本地 ML Kit 整屏 OCR</td><td>新增纯函数 <code class="inline">ocrLineIsMine()</code>：用每行的左右边缘和屏幕两侧「头像留白」比较，<strong>明显贴右且左侧不贴左</strong>的行判为「我」。刻意保守——长气泡会横跨大半屏，宁可仍归「对方」让你手动改，也绝不把对方的话错当成自己说的。每组只用最上面一行判方向。</td></tr>
+    <tr><td>视觉模型</td><td>prompt 明确写死「靠右／头像在右＝我，靠左＝对方，群聊里除我之外一律对方，分不清就写对方」，并要求忽略时间戳、昵称、输入框、已读回执。</td></tr>
+    <tr><td>解析与核对页</td><td>兼容半角冒号和 markdown 列表符号，不再静默丢行；核对页提示改成直说「把你发的每行改成我：」。<code class="inline">OCR_NOTE</code> 同步更新。</td></tr>
+  </table>
+  <div class="note">建议继续用 <strong>「ML Kit 本地」</strong>：离线、不耗接口额度、中文识别稳，配好核对页就够了。选视觉模型的话，要确认那个模型<strong>真的支持图片输入</strong>，否则只会拿到一段凭空猜的文字。</div>
+  <div class="warn">说话人判错会连带影响分析：<code class="inline">latest_from</code>、自动分析触发、候选回复的口吻样本都按「谁最后发言」算。所以核对页这步别跳过，改完再确认。</div>
+  <div class="ok">上述改进已打进 <strong>狗头军师-说话人修正版.apk</strong>（远端 <code class="inline">cdccbe8d</code> / run #6，SHA256 <code class="inline">f9ee19af02e674c…</code>）。但<strong>核对页仍然要人工过一遍</strong>：长气泡横跨大半屏时代码会保守地继续归「对方」，这是刻意设计，避免把对方的话错算成你自己的。</div>
+</section>
+
+<footer>悬浮窗排障图文卡 · 2026-11-06 22:02 更新（新增第 7 节「说话人判错」）· 本地 4e0e723 / 远端 cdccbe8d（CI run #6 通过）· 说话人修正版 APK SHA256 f9ee19af… · 单文件离线可打开，可直接打印对照手机操作</footer>
+</div>
+</body>
+</html>

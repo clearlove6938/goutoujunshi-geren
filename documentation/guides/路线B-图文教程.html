@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>路线 B 图文教程 · 把完整狗头军师 Skill 装进安卓手机</title>
+<style>
+  :root{--ink:#2C2C2A;--sub:#5F5E5A;--line:#D3D1C7;--bg:#F7F6F2;--card:#FFFFFF;--green:#0F6E56;--green-bg:#E1F5EE;--red:#A32D2D;--red-bg:#FCEBEB;--amber:#854F0B;--amber-bg:#FAEEDA}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;line-height:1.75;font-size:15px}
+  .wrap{max-width:880px;margin:0 auto;padding:32px 20px 80px}
+  header{border-bottom:1px solid var(--line);padding-bottom:24px;margin-bottom:28px}
+  .kicker{font-size:12px;letter-spacing:.12em;color:var(--green);font-weight:600}
+  h1{font-size:26px;line-height:1.4;margin:10px 0 8px;font-weight:600}
+  .lead{color:var(--sub);margin:0;font-size:14px}
+  h2{font-size:19px;margin:0 0 4px;font-weight:600}
+  h3{font-size:15px;margin:24px 0 8px;font-weight:600}
+  p{margin:10px 0}
+  .steps{display:flex;gap:8px;flex-wrap:wrap;margin:22px 0 8px}
+  .steps span{flex:1 1 120px;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:13px;text-align:center}
+  .steps b{display:block;color:var(--green);font-size:12px;margin-bottom:2px}
+  section{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:24px;margin:20px 0}
+  .num{display:inline-flex;width:28px;height:28px;border-radius:50%;background:var(--green);color:#fff;align-items:center;justify-content:center;font-size:14px;font-weight:600;margin-right:10px;vertical-align:middle}
+  .figure{margin:18px 0;border:1px solid var(--line);border-radius:10px;background:#FCFCFA;padding:12px}
+  .figure svg{display:block;width:100%;height:auto}
+  .cap{font-size:12px;color:var(--sub);margin-top:8px;text-align:center}
+  .code{position:relative;background:#F1EFE8;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin:12px 0;overflow-x:auto}
+  .code pre{margin:0;font-family:Consolas,"Courier New",monospace;font-size:13px;line-height:1.7;white-space:pre}
+  .code button{position:absolute;right:8px;top:8px;border:1px solid var(--line);background:#fff;color:var(--sub);border-radius:6px;padding:3px 10px;font-size:12px;cursor:pointer}
+  .note{border-left:3px solid var(--amber);background:var(--amber-bg);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;margin:14px 0}
+  .warn{border-left:3px solid var(--red);background:var(--red-bg);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;margin:14px 0}
+  .ok{border-left:3px solid var(--green);background:var(--green-bg);padding:10px 14px;border-radius:0 8px 8px 0;font-size:14px;margin:14px 0}
+  table{width:100%;border-collapse:collapse;margin:12px 0;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:#F1EFE8;font-weight:600}
+  ul{margin:10px 0;padding-left:22px}
+  li{margin:6px 0}
+  code.inline{background:#F1EFE8;padding:1px 6px;border-radius:4px;font-size:13px;font-family:Consolas,monospace}
+  .files{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin:14px 0}
+  .files div{background:#FCFCFA;border:1px solid var(--line);border-radius:10px;padding:12px;font-size:13px}
+  .files b{display:block;color:var(--green);margin-bottom:4px;word-break:break-all;font-size:12px}
+  footer{border-top:1px solid var(--line);margin-top:32px;padding-top:20px;color:var(--sub);font-size:13px}
+  @media(max-width:600px){.wrap{padding:20px 14px 60px}h1{font-size:22px}section{padding:18px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <div class="kicker">GOUTOUJUNSHI · JEV CHAT · 路线 B</div>
+  <h1>把完整狗头军师 Skill 装进安卓手机</h1>
+  <p class="lead">本地改好源码 → 推到 GitHub → Actions 云端编译 → 下载 APK → 装机开启开关。全程不需要在本机安装 Android SDK。</p>
+  <div class="steps">
+    <span><b>01</b>准备仓库</span>
+    <span><b>02</b>建空仓库</span>
+    <span><b>03</b>push</span>
+    <span><b>04</b>取 APK</span>
+    <span><b>05</b>装机开开关</span>
+  </div>
+</header>
+
+<section>
+  <h2>当前状态：说话人修正版 APK 已产出 ✅</h2>
+  <div class="ok"><strong>全流程已跑通，并已四次出包。</strong>仓库 <code class="inline">clearlove6938/goutoujunshi-geren</code> 的 android job 连续四次编译通过。最新交付：<strong>狗头军师-说话人修正版.apk</strong>（27.2 MB / 28,505,467 bytes，SHA256 <code class="inline">f9ee19af02e674c…</code>），由远端提交 <code class="inline">cdccbe8d</code> / Actions run #6 产出：修复本地 OCR 把所有聊天行都归为「对方」的问题，并保留此前的悬浮球修复与常驻开关。日志确认 <code class="inline">:app:testDebugUnitTest :app:assembleDebug</code> → <code class="inline">BUILD SUCCESSFUL in 2m 4s</code>。<br>包内 <code class="inline">classes3/5/6.dex</code> 变化且含 <code class="inline">ocrLineIsMine</code>，51 个 <code class="inline">assets/goutou_skill/</code> 资源、6 个场景、6000 字预算、arm64-v8a 全部保持不变。<br><strong>⚠️ 四次构建的 debug 签名两两不同（67ec51c7… / c9d665ef… / 9cefeed9… / d057eed3…），每次换包都必须先卸载旧版，也都会清空本地设置（密钥、笔记、联系人）。还没装旧版的话直接装最新这版即可。</strong>详见《悬浮窗排障-图文卡.html》第 7 节。</div>
+  <div class="note">以下两段是首次推送时的过程记录，网络与认证问题后来已用 REST Git Data API 全部绕开，<strong>不需要再做一遍</strong>。</div>
+  <div class="ok"><strong>（历史记录）GET 已恢复，但 push 仍不稳。</strong>实测 <code class="inline">git ls-remote</code> 能读到官方仓库 HEAD、目标空仓库 HTTPS 端点 200；但 <code class="inline">git push</code> 是 POST 大包：走代理报 <code class="inline">CONNECT tunnel failed 502</code> / <code class="inline">Empty reply from server</code>，去掉代理直连有时能走到认证、有时 21 秒超时。<strong>网络不是唯一障碍，认证也还缺。</strong>bundle 保留为「换机」方案。</div>
+  <p>本地工作仓库 <code class="inline">goutoujunshi-jev-chat</code> 已初始化并提交（<code class="inline">1bc4980</code>，440 个文件，工作树干净），<strong>目前没有任何 remote</strong>。GitHub 侧空仓库已建好：<code class="inline">clearlove6938/goutoujunshi-geren</code>，三项初始化都没勾，符合「空仓库」要求。</p>
+  <div class="warn"><strong>两个前置条件：网络（POST）+ 认证。</strong>本机有 Git Credential Manager 2.9.0，但还没有缓存 GitHub 凭据，第一次 push 会弹浏览器要授权。<strong>最确定的做法</strong>：给一个 <code class="inline">repo</code> 权限的 PAT，改走 <code class="inline">api.github.com</code> 的 REST Git Data API（该域名稳定 200），一次上传完并触发 Actions，完全绕开被挡的 git 端点。</div>
+  <div class="files">
+    <div><b>goutoujunshi-jev-chat.bundle</b>16 MB 完整仓库备份，仅换机时用</div>
+    <div><b>路线B-推送与出包操作卡.txt</b>纯文字命令清单</div>
+    <div><b>狗头军师-手机常驻笔记.txt</b>路线 A 备用，零编译即刻生效</div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">1</span>准备本地仓库（二选一）</h2>
+  <p><strong>路径 A（推荐，本机直接做）：</strong>不用还原，改动就在现成目录里。打开终端进到该目录，确认提交和 remote 状态：</p>
+  <div class="code"><button onclick="cp(this)">复制</button><pre><code>cd goutoujunshi-jev-chat
+git log --oneline -1
+git remote -v</code></pre></div>
+  <div class="ok"><code class="inline">git remote -v</code> <strong>无输出</strong> = 本机仓库没有 remote，第 3 步用 <code class="inline">remote add</code>。</div>
+  <p><strong>路径 B（换一台电脑时）：</strong>拷走 bundle 再还原，此时 origin 已存在：</p>
+  <div class="code"><button onclick="cp(this)">复制</button><pre><code>git clone -b main goutoujunshi-jev-chat.bundle goutoujunshi-jev-chat
+cd goutoujunshi-jev-chat
+git log --oneline -1
+git remote -v</code></pre></div>
+  <div class="figure">
+    <svg viewBox="0 0 680 168" role="img" aria-label="终端还原仓库示意图">
+      <rect x="30" y="14" width="620" height="140" rx="12" fill="#FFFFFF" stroke="#D3D1C7" stroke-width="1"/>
+      <rect x="30" y="14" width="620" height="30" rx="12" fill="#F1EFE8"/>
+      <path d="M30 34 h620" stroke="#D3D1C7" stroke-width="1"/>
+      <circle cx="50" cy="29" r="5" fill="#D85A30"/><circle cx="68" cy="29" r="5" fill="#EF9F27"/><circle cx="86" cy="29" r="5" fill="#1D9E75"/>
+      <text x="310" y="33" font-size="12" fill="#5F5E5A" text-anchor="middle" font-family="sans-serif">终端</text>
+      <text x="52" y="72" font-size="13" fill="#2C2C2A" font-family="Consolas,monospace">$ git log --oneline -1</text>
+      <rect x="44" y="86" width="592" height="44" rx="6" fill="#E1F5EE"/>
+      <text x="56" y="106" font-size="13" fill="#0F6E56" font-family="Consolas,monospace">1bc4980 Bundle full goutoujunshi Skill for Mac and Android</text>
+      <text x="56" y="123" font-size="12" fill="#0F6E56" font-family="sans-serif">看到这一行 = 还原成功，改动全在</text>
+    </svg>
+    <div class="cap">图 1 · 看到 <code class="inline">1bc4980</code> 就说明改动全在</div>
+  </div>
+  <div class="note">本地目录和 bundle 里都已经包含 <code class="inline">skills/goutoujunshi/</code>（63 个文件）和 Android 的 <code class="inline">assets/goutou_skill/</code>（51 个文件），不需要再单独同步。</div>
+  <div class="warn"><strong>容易踩的坑（取决于你走哪条路径）：</strong>从 bundle 执行 <code class="inline">git clone</code> 后，<code class="inline">origin</code> 会自动指向那个 .bundle 文件，这时用 <code class="inline">remote add</code> 会报 <code class="inline">remote origin already exists.</code>；但本机现成目录<strong>没有</strong> remote，反而必须用 <code class="inline">remote add</code>。第 3 步给了两条路径都通用的写法。</div>
+</section>
+
+<section>
+  <h2><span class="num">2</span>在 GitHub 新建空仓库</h2>
+  <div class="ok"><strong>本步已完成，可以跳过：</strong>你已经建好了空仓库 <code class="inline">clearlove6938/goutoujunshi-geren</code>（Quick setup 页、Public、三个初始化项都没勾）。在这个页面<strong>只需要点 HTTPS 地址行最右侧的「复制」小图标</strong>，拿到 <code class="inline">https://github.com/clearlove6938/goutoujunshi-geren.git</code>。页面下半部分 GitHub 自动给的两段命令<strong>不要照抄</strong>，见第 3 步。</div>
+  <p>如果以后要另建一个：打开 <code class="inline">https://github.com/new</code>，公开或私有都行。</p>
+  <div class="note"><strong>界面上点哪里：</strong>新版首页右上角「Type / to search」搜索框<strong>右边那个 <code class="inline">＋ ▼</code></strong> → 下拉选 <strong>New repository</strong>。注意中间「Ask anything」输入框下面那排也有个 <code class="inline">＋</code>，那是 AI 提问加上下文用的，别点错；左侧「Top repositories」旁的放大镜只是搜仓库。<br>更省事的做法：直接在浏览器地址栏敲 <code class="inline">github.com/new</code> 回车，不用找按钮。</div>
+  <div class="warn"><strong>三个勾都不要选：</strong>Add a README、Add .gitignore、Choose a license。空仓库才能直接 <code class="inline">push -u origin main</code>，否则会先要处理冲突。</div>
+  <div class="figure">
+    <svg viewBox="0 0 680 236" role="img" aria-label="GitHub 新建仓库表单示意图">
+      <rect x="30" y="12" width="620" height="212" rx="12" fill="#FFFFFF" stroke="#D3D1C7" stroke-width="1"/>
+      <text x="52" y="42" font-size="14" fill="#2C2C2A" font-family="sans-serif" font-weight="600">Create a new repository</text>
+      <text x="52" y="70" font-size="12" fill="#5F5E5A" font-family="sans-serif">Repository name</text>
+      <rect x="52" y="78" width="420" height="30" rx="6" fill="#FCFCFA" stroke="#B4B2A9" stroke-width="1"/>
+      <text x="62" y="98" font-size="13" fill="#2C2C2A" font-family="Consolas,monospace">goutoujunshi-jev-chat-my</text>
+      <path d="M52 126 h576" stroke="#D3D1C7" stroke-width="1"/>
+      <rect x="52" y="140" width="14" height="14" rx="3" fill="#FFFFFF" stroke="#B4B2A9"/>
+      <text x="78" y="152" font-size="12" fill="#5F5E5A" font-family="sans-serif">Add a README file</text>
+      <text x="600" y="152" font-size="13" fill="#A32D2D" font-family="sans-serif">不选</text>
+      <rect x="52" y="164" width="14" height="14" rx="3" fill="#FFFFFF" stroke="#B4B2A9"/>
+      <text x="78" y="176" font-size="12" fill="#5F5E5A" font-family="sans-serif">Add .gitignore</text>
+      <text x="600" y="176" font-size="13" fill="#A32D2D" font-family="sans-serif">不选</text>
+      <rect x="52" y="188" width="14" height="14" rx="3" fill="#FFFFFF" stroke="#B4B2A9"/>
+      <text x="78" y="200" font-size="12" fill="#5F5E5A" font-family="sans-serif">Choose a license</text>
+      <text x="600" y="200" font-size="13" fill="#A32D2D" font-family="sans-serif">不选</text>
+      <rect x="500" y="140" width="128" height="30" rx="6" fill="#0F6E56"/>
+      <text x="564" y="160" font-size="12" fill="#FFFFFF" text-anchor="middle" font-family="sans-serif">Create repository</text>
+    </svg>
+    <div class="cap">图 2 · 建一个完全空的仓库，记下 <code class="inline">https://github.com/&lt;用户名&gt;/&lt;仓库名&gt;.git</code></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="num">3</span>推送</h2>
+  <p>在本机终端执行。<strong>第一行是两种路径通用的写法</strong>：没有 origin 就新建，已有（指向 bundle）就改地址，不会报 already exists。</p>
+  <div class="code"><button onclick="cp(this)">复制</button><pre><code>git remote add origin https://github.com/clearlove6938/goutoujunshi-geren.git 2>/dev/null || git remote set-url origin https://github.com/clearlove6938/goutoujunshi-geren.git
+git remote -v
+git push -u origin main</code></pre></div>
+  <div class="warn"><strong>不要照抄 GitHub 空仓库页面给的命令。</strong>它写的是 <code class="inline">git remote add origin …</code> + <code class="inline">git branch -M main</code>：<code class="inline">branch -M</code> 对我们多余（已经是 main），而 <code class="inline">remote add</code> 只对「本机无 remote」成立；从 bundle clone 出来的仓库会报错。</div>
+  <div class="note">首次 push 会由 Git Credential Manager 弹浏览器要求 GitHub 授权，点一下即可（你已登录）。若用 PAT：用户名填 GitHub 账号名，密码粘贴 PAT（需 <code class="inline">repo</code> 权限）。</div>
+  <div class="figure">
+    <svg viewBox="0 0 680 150" role="img" aria-label="推送流程示意图">
+      <rect x="40" y="36" width="210" height="78" rx="10" fill="#F1EFE8" stroke="#B4B2A9"/>
+      <text x="145" y="66" font-size="14" fill="#2C2C2A" text-anchor="middle" font-family="sans-serif">本地 main</text>
+      <text x="145" y="88" font-size="12" fill="#5F5E5A" text-anchor="middle" font-family="Consolas,monospace">1bc4980 · 440 files</text>
+      <path d="M262 75 L410 75" stroke="#0F6E56" stroke-width="2" fill="none"/>
+      <path d="M410 75 l-12 -7 v14 z" fill="#0F6E56"/>
+      <text x="336" y="64" font-size="12" fill="#0F6E56" text-anchor="middle" font-family="sans-serif">git push</text>
+      <rect x="424" y="36" width="216" height="78" rx="10" fill="#E1F5EE" stroke="#0F6E56"/>
+      <text x="532" y="66" font-size="14" fill="#04342C" text-anchor="middle" font-family="sans-serif">GitHub 仓库</text>
+      <text x="532" y="88" font-size="12" fill="#0F6E56" text-anchor="middle" font-family="sans-serif">自动触发 Actions</text>
+      <text x="340" y="136" font-size="12" fill="#5F5E5A" text-anchor="middle" font-family="sans-serif">提示登录时用 Git Credential Manager 走浏览器，或把 PAT 当密码填</text>
+    </svg>
+    <div class="cap">图 3 · push 成功即触发云端构建</div>
+  </div>
+  <div class="note">本机 POST 实测不稳：带代理被 502 拒，去代理直连时通时断。可试 <code class="inline">env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy git push -u origin main</code>；仍不行就走 PAT + <code class="inline">api.github.com</code> REST，或换机用 bundle。</div>
+</section>
+
+<section>
+  <h2><span class="num">4</span>等 CI 出包，下载 APK</h2>
+  <p>打开 <code class="inline">https://github.com/clearlove6938/goutoujunshi-geren/actions</code>（就是仓库页顶部的 <strong>Actions</strong> 标签），找到 <strong>Platform preview packages</strong> 的最新一次运行，等 <strong>android</strong> job 变绿（要装 Android SDK 35，约 5–15 分钟）。</p>
+  <div class="figure">
+    <svg viewBox="0 0 680 216" role="img" aria-label="Actions 页面与 Artifacts 下载示意图">
+      <rect x="30" y="12" width="620" height="192" rx="12" fill="#FFFFFF" stroke="#D3D1C7"/>
+      <text x="52" y="40" font-size="14" fill="#2C2C2A" font-family="sans-serif" font-weight="600">Actions · Platform preview packages</text>
+      <rect x="52" y="54" width="576" height="38" rx="6" fill="#E1F5EE" stroke="#9FE1CB"/>
+      <circle cx="72" cy="73" r="8" fill="#1D9E75"/>
+      <path d="M68 73 l3 3 l6 -6" stroke="#FFFFFF" stroke-width="2" fill="none"/>
+      <text x="90" y="78" font-size="12" fill="#04342C" font-family="sans-serif">Bundle full goutoujunshi Skill for Mac and Android · main</text>
+      <text x="52" y="116" font-size="13" fill="#2C2C2A" font-family="sans-serif" font-weight="600">Artifacts</text>
+      <rect x="52" y="126" width="576" height="34" rx="6" fill="#FCFCFA" stroke="#D3D1C7"/>
+      <text x="66" y="148" font-size="12" fill="#2C2C2A" font-family="Consolas,monospace">goutoujunshi-jev-chat-android-debug</text>
+      <text x="602" y="148" font-size="12" fill="#0F6E56" text-anchor="end" font-family="sans-serif">下载 ↓</text>
+      <rect x="52" y="168" width="576" height="24" rx="6" fill="#FAEEDA"/>
+      <text x="66" y="184" font-size="11" fill="#854F0B" font-family="sans-serif">若没有自动运行，点 Run workflow 手动触发，release_tag 留空</text>
+    </svg>
+    <div class="cap">图 4 · 下载后解压得到 <code class="inline">app-debug.apk</code>（Artifacts 需登录 GitHub）</div>
+  </div>
+  <div class="ok"><strong>首跑真实失败已修复并二次通过。</strong>第一次 android job 报 <code class="inline">./gradlew: Permission denied (exit 126)</code> —— 仓库在 Windows 上初始化，<code class="inline">gradlew</code> 被记成 100644 不可执行。已把 workflow 改成 <code class="inline">bash gradlew …</code> 并把该文件 mode 补为 100755，重新推送后 android job <strong>success</strong>。Kotlin 代码本身无编译错误。</div>
+</section>
+
+<section>
+  <h2><span class="num">5</span>装到手机，打开开关</h2>
+  <p>最新版 APK 已下载到本机 <code class="inline">狗头军师-说话人修正版.apk</code>（27.2 MB / SHA256 <code class="inline">f9ee19af02e674c…</code>），旧版分别保留为 <code class="inline">app-debug-prev.apk</code> / <code class="inline">app-debug-prev2.apk</code> / <code class="inline">app-debug-prev3.apk</code>。把它传到手机（微信发给自己、数据线或手机浏览器），允许「安装未知来源应用」。要求 <strong>Android 11+、ARM64</strong>。<strong>注意：新版与首版 debug 签名不同，必须先卸载旧版，且会清空本地设置。</strong></p>
+  <div class="figure">
+    <svg viewBox="0 0 680 250" role="img" aria-label="手机设置页开启完整 Skill 开关示意图">
+      <rect x="238" y="12" width="204" height="226" rx="24" fill="#FFFFFF" stroke="#5F5E5A" stroke-width="2"/>
+      <rect x="306" y="20" width="68" height="8" rx="4" fill="#D3D1C7"/>
+      <text x="340" y="58" font-size="13" fill="#2C2C2A" text-anchor="middle" font-family="sans-serif" font-weight="600">设置 · 分析</text>
+      <path d="M254 72 h172" stroke="#D3D1C7"/>
+      <text x="258" y="100" font-size="12" fill="#5F5E5A" font-family="sans-serif">策略判断 / 回复接口</text>
+      <rect x="398" y="88" width="30" height="16" rx="8" fill="#D3D1C7"/>
+      <circle cx="420" cy="96" r="6" fill="#FFFFFF"/>
+      <text x="258" y="140" font-size="12" fill="#2C2C2A" font-family="sans-serif">使用完整狗头军师 Skill</text>
+      <rect x="398" y="128" width="30" height="16" rx="8" fill="#0F6E56"/>
+      <circle cx="420" cy="136" r="6" fill="#FFFFFF"/>
+      <text x="258" y="164" font-size="11" fill="#0F6E56" font-family="sans-serif">每轮按联系人目标加载 2–3 份指南</text>
+      <path d="M254 180 h172" stroke="#D3D1C7"/>
+      <text x="258" y="204" font-size="11" fill="#5F5E5A" font-family="sans-serif">发送始终由你手动完成</text>
+      <text x="90" y="120" font-size="12" fill="#0F6E56" font-family="sans-serif">① 装 APK</text>
+      <text x="90" y="142" font-size="12" fill="#0F6E56" font-family="sans-serif">② 配接口</text>
+      <text x="90" y="164" font-size="12" fill="#0F6E56" font-family="sans-serif">③ 开开关</text>
+      <text x="472" y="140" font-size="12" fill="#5F5E5A" font-family="sans-serif">默认关闭，</text>
+      <text x="472" y="160" font-size="12" fill="#5F5E5A" font-family="sans-serif">开启会增加</text>
+      <text x="472" y="180" font-size="12" fill="#5F5E5A" font-family="sans-serif">每轮 token</text>
+    </svg>
+    <div class="cap">图 5 · 设置页的「使用完整狗头军师 Skill」只在新构建的 APK 里才有</div>
+  </div>
+  <div class="warn">若与旧版调试包签名不一致，需先卸载旧版；<strong>卸载会清掉已存的 Key 和配置</strong>，先记下来。另外<strong>安卓版不支持微信截图</strong>，请用 QQ / X / 飞书 / Soul 走手动截屏流程。</div>
+  <div class="ok"><strong>官方现成 APK 里没有这个开关。</strong>从 Releases 下的 v0.1.8-preview 是原版，只有走完本教程重新构建的包才有完整 Skill 与开关。</div>
+</section>
+
+<section>
+  <h2>排错速查</h2>
+  <table>
+    <tr><th>现象</th><th>原因 / 处理</th></tr>
+    <tr><td><code class="inline">error: remote origin already exists.</code></td><td>说明你走的是 bundle clone 路径（origin 指向 .bundle）。改用 <code class="inline">git remote set-url origin &lt;仓库地址&gt;</code>，或直接用第 3 步那条通用命令。</td></tr>
+    <tr><td>CONNECT tunnel 502 / Empty reply from server</td><td>代理只放行 GET，挡 POST 大包。去掉代理直连重试；仍不稳就改走 PAT + <code class="inline">api.github.com</code> REST API，或换机用 bundle。</td></tr>
+    <tr><td><code class="inline">could not read Username</code></td><td>网络已到 GitHub，只差认证。让 GCM 弹浏览器授权，或用 PAT 当密码。</td></tr>
+    <tr><td>生成 PAT 时跳到 <code class="inline">Confirm access</code>，红字 <code class="inline">Sudo authentication failed.</code></td><td>GitHub 的 <strong>sudo mode</strong>：进 Settings / 生成 PAT 属敏感操作，要二次验身份。红字只说明上一次密码或 2FA 没通过，<strong>不是封号、也不是推送失败</strong>。点绿色 <code class="inline">Verify via email</code> → 绑定邮箱收验证码 → 回来继续生成 PAT；sudo 通过后几小时内不再问。<br>也可以完全不要 PAT：在自己终端跑一次 push 并点 GCM 的浏览器 OAuth 授权（不触发 sudo），token 会缓存，之后由我走 <code class="inline">api.github.com</code> REST 完成上传。</td></tr>
+    <tr><td>提示输入 GitHub 用户名 / 密码</td><td>正常。GCM 会弹浏览器授权；用 PAT 时用户名填账号名、密码填 PAT（repo 权限）。</td></tr>
+    <tr><td>Actions 页面没有运行记录</td><td>新仓库首次 push 偶尔不触发。点「Run workflow」手动跑，release_tag 留空。</td></tr>
+    <tr><td><code class="inline">./gradlew: Permission denied</code> / exit 126</td><td>Windows 初始化的仓库把 gradlew 记成 100644。改 workflow 用 <code class="inline">bash gradlew</code>，并把该文件 mode 设为 100755 后重推。本次已修复。</td></tr>
+    <tr><td>Artifacts 下不了</td><td>需登录 GitHub 账号；GitHub 对未登录下载 artifact 有限制。</td></tr>
+    <tr><td>手机提示签名不一致</td><td>调试签名与旧包不同，卸载重装；先备份配置。</td></tr>
+    <tr><td>设置页找不到开关</td><td>装的是官方 Release 包。必须用本教程构建出的 app-debug.apk。</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>这份包里有什么</h2>
+  <table>
+    <tr><th>位置</th><th>内容</th></tr>
+    <tr><td><code class="inline">skills/goutoujunshi/</code></td><td>完整上游 Skill 包，63 个文件，含 MIT LICENSE</td></tr>
+    <tr><td><code class="inline">integrations/jev_android/.../assets/goutou_skill/</code></td><td>APK 内置资源 51 个：SKILL.md + 20 份知识 + 23 份指南 + 场景映射</td></tr>
+    <tr><td><code class="inline">integrations/jev_mac/core.py</code></td><td><code class="inline">GOUTOU_SKILL_MODE=builtin|full</code> 开关，三层统一加载</td></tr>
+    <tr><td><code class="inline">scripts/sync_android_skill.py</code></td><td>资源生成脚本，幂等</td></tr>
+  </table>
+  <p class="ok">已验证：181 个 Python 测试全绿、<code class="inline">validate_skill.py passed</code>（CI 的 Validate Skill 也 success）、生成器幂等、Kotlin 引用的 7 个资源全部存在、<strong>Android Kotlin 已在 CI 编译通过并产出 APK</strong>；包内 51 个 Skill 资源、6 个场景映射、arm64-v8a 均已逐项核验。</p>
+  <p style="color:var(--sub);font-size:14px">Jev 的英文判断题保持不动——那套题面经过校准，只增强回复生成层。上游 Skill 原文里「不写工作区 / 数据不外发 / 不联网」是本地 Codex Skill 的边界，注入前会追加移动端适配声明，明确截图与模型调用由 App 完成，JSON 输出契约优先。</p>
+</section>
+
+<footer>路线 B 图文教程 · 2026-11-06 22:02 更新 · 仓库 clearlove6938/goutoujunshi-geren（最新提交 cdccbe8d，CI run #6）· 说话人修正版 APK 27.2 MB / SHA256 f9ee19af… · 单文件离线可打开</footer>
+</div>
+<script>
+function cp(btn){
+  var t = btn.parentElement.querySelector('code').innerText;
+  if(navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(t).then(function(){btn.textContent='已复制';setTimeout(function(){btn.textContent='复制'},1500)})
+      .catch(function(){btn.textContent='请手动复制'});
+  } else { btn.textContent='请手动复制'; }
+}
+</script>
+</body>
+</html>

@@ -90,6 +90,19 @@ python3 -B -m unittest discover -s tests -q
 
 更多配置与开发说明：[Mac](integrations/jev_mac/README.md) · [Windows](integrations/jev_windows/README.md) · [Android](integrations/jev_android/README.md) · [iOS](integrations/jev_ios/README.md)。离线检查不替代真实设备、模型接口与聊天应用的兼容性测试。
 
+## 本分支：完整教程与二开功能
+
+本仓库在 upstream Jev Chat 基础上加入了**完整狗头军师 Skill 独立包**、Mac / Android 双端 Skill 切换、Android 悬浮球兜底与常驻开关，以及 OCR 说话人分边。完整资料见 [文档索引](documentation/guides/README.md)：
+
+- [完整使用教程](documentation/guides/完整使用教程.md)：从安装、三项权限、三处接口配置，到跑通一轮与人工核对
+- [功能总览](documentation/guides/功能总览.md)：逐模块功能清单，标注【上游】/【新增】/【修复】
+- [悬浮窗排障图文卡](documentation/guides/悬浮窗排障-图文卡.html) · [路线 B 出包图文教程](documentation/guides/路线B-图文教程.html)：单文件离线 HTML，下载后用浏览器打开
+- [狗头军师-手机常驻笔记.txt](documentation/guides/狗头军师-手机常驻笔记.txt)：不编译也能注入军师规则的精简版
+- [界面点击位置标注图](documentation/guides/README.md#github-界面点击位置标注图)：新建仓库、空仓库页、PAT sudo 二次验证三张截图
+- [路线 B 推送与出包操作卡](documentation/guides/路线B-推送与出包操作卡.txt)：纯文字命令与四次出包排错记录
+
+Android 调试 APK 可直接在 [本分支 Releases](https://github.com/clearlove6938/goutoujunshi-geren/releases) 下载，或由本仓库 Actions 的 `Platform preview packages` → `android` job 产出（artifact `goutoujunshi-jev-chat-android-debug`）。每次 CI 构建的 debug 签名不同，**换版本需先卸载旧版**，卸载会清除本地设置。最新版包含完整 Skill、悬浮球兜底与常驻开关、OCR 说话人分边。
+
 ## 贡献与致谢
 
 - [@RayWangQvQ（在7楼）](https://github.com/RayWangQvQ)：[PR #1](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/pull/1)，修复 Android 原文核对与焦点恢复流程，并补充测试。

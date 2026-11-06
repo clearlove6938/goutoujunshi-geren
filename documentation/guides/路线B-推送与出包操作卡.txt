@@ -1,0 +1,159 @@
+路线 B：推到 GitHub，Actions 出 APK
+
+【✅ 四次出包已完成 · 2026-11-06 22:02】说话人修正版（最新）
+- 问题：每次识别都把「我」和对方的聊天全归成「对方」。
+- 根因：默认 ML Kit 本地 OCR 的 groupOcrLines() 把所有行硬编码为
+  Msg("other", ...)（OCR_NOTE 原文「OCR 未分边，把全部消息当作对方所说」）；
+  视觉模型 prompt 也完全没说明怎么按左右分说话人，且解析只认全角冒号。
+- 立即可用（不用换包）：核对页文本框可编辑，把自己的行改成「我：」开头再确认。
+- 改动 4 个 Kotlin 文件：ChatCaptureService.kt 新增纯函数 ocrLineIsMine()
+  （按左右 gutter 保守分边，长/横跨气泡仍归 other，只用每组首行判方向）、
+  放宽视觉输出前缀解析、更新 OCR_NOTE；VisionClient.kt 强化分左右 prompt；
+  OverlayController.kt 核对页提示 + 半角冒号兼容；ChatCaptureServiceTest.kt +4 单测。
+- 本机先用 Python 复算判定公式确认单测断言成立，再交 CI 编译。
+- 本地 4e0e723 → REST 增量推送 → 远端 cdccbe8d → Actions run #6 android success
+  （BUILD SUCCESSFUL in 2m 4s，_android_job4.log）。artifact 首次下载 curl rc=28 超时，
+  单独带 --retry 4 重下成功，未重新编译。
+- 交付：狗头军师-说话人修正版.apk
+  （27.2 MB / 28505467 bytes）
+  SHA256: f9ee19af02e674c6a9f3cd2aab9891193b65ab4a9ebec49355e26fd573dc2d05
+- 核验：classes3/5/6.dex 变化，ocrLineIsMine 编入 classes6.dex；
+  Skill 资源 51 项、6 场景、budget 6000 不变。
+- v2 签名证书 d057eed3…（前几版 67ec51c7… / c9d665ef… / 9cefeed9…），
+  第 4 次变化：仍要卸载重装、仍会清空本地设置。若还没装旧版，直接装这版即可。
+- 注意：核对页依然必须人工过一遍；长气泡会保守归「对方」，避免把对方的话算成自己的。
+
+【✅ 三次出包已完成 · 2026-11-06 21:42】悬浮球常驻版
+- 需求：让悬浮球全界面常驻。新增 Prefs.bubbleAlwaysOn（默认 false）+
+  SettingsActivity「外观」卡片开关 + 保存逻辑；ChatCaptureService 在常驻时
+  绕过窗口 drop 列表、白名单 hide、未适配 App 排除条件；总开关关闭 / 服务销毁
+  的 hide 特意保留。shouldParkIdleBubble 加 alwaysOn 参数并补 3 个 Kotlin 单测。
+- 本地 145813c → REST 增量推送 4 个 Kotlin 文件 → 远端 3c54e8c4 → Actions run #5
+  android success（BUILD SUCCESSFUL in 2m 3s，testDebugUnitTest 已执行）。
+- 交付：狗头军师-悬浮球常驻版.apk
+  （27.2 MB / 28505467 bytes）
+  SHA256: 8f59ad98390132945ae0ee4864ac25083a2cf2518204e5c5cade113cc2c7bb81
+- 核验：相对修复版只有 classes6.dex 变化且含 bubbleAlwaysOn / bubble_always_on；
+  Skill 资源 51 项、6 场景、budget 6000 不变；CI 日志 _android_job3.log。
+- v2 签名证书 9cefeed9…（前两版 67ec51c7… / c9d665ef…），又变了：
+  必须卸载重装，本地设置再次清空，先抄 API Key。
+- 用法：装后 设置 → 外观 →「悬浮球常驻（任何界面都不自动隐藏）」→ 保存全部设置。
+  默认关闭，关闭时仍是原来的按需隐藏行为。
+
+【✅ 二次出包已完成 · 2026-11-06 21:28】悬浮球修复版
+- 起因：QQ 群里没有悬浮球。根因是 ChatCaptureService 对「已适配应用」缺少兜底，
+  adapter.extract() 返回 null 时直接 return，球既不显示也不报错。
+- 本地提交 8100b32；本机 git push 仍被 schannel 阻断，改用 api.github.com 的
+  REST Git Data API 增量推送 3 个 Kotlin 文件，远端提交 e2a1ef88。
+- GitHub Actions run #4 android job：testDebugUnitTest + assembleDebug
+  → BUILD SUCCESSFUL in 1m 42s（CI 日志已下载核对：_android_job2.log）。
+- 交付：狗头军师-悬浮球修复版.apk
+  （27.2 MB / 28505467 bytes）
+  SHA256: fe580060f63534b018e3418ffd1f9f509bc60067c84fccad297a1c852c30e80d
+- 包内核验：1029 项中仅 classes5.dex / classes6.dex 变化；新符号
+  shouldParkIdleBubble / parkIdleBubble 确实编入 classes6.dex；
+  Skill 资源 51 项、6 场景、budget 6000、arm64-v8a 全部不变。
+- ⚠️ v2 签名证书变化（67ec51c7… → c9d665ef…），不能覆盖安装；
+  必须先卸载旧版，本地设置会被清空，先抄下 API Key / 白名单 / 关系描述。
+- 首版 APK 保留为 app-debug-prev.apk；装机与排障见 悬浮窗排障-图文卡.html。
+
+【✅ 首版已完成 · 2026-11-06 20:40】
+- 仓库 clearlove6938/goutoujunshi-geren 已含全部 440 个文件（tree 533 项、无截断）。
+- GitHub Actions 的 android job 编译通过；APK 已下载到：
+  app-debug.apk  （27.2 MB / 28505467 bytes）
+  SHA256: a212064046ea5c8ba5e1cf2cf17dd20e4fc8a2c43e9636bab6e71bf78a7a3c0a
+- 包内核验：assets/goutou_skill/ 共 51 项（SKILL.md + 20 知识 + 23 指南 +
+  场景别名 + OCR 指南 + index.json），6 个场景映射，budget 6000，7 个 dex，仅 arm64-v8a。
+- 首跑曾因 `./gradlew: Permission denied (exit 126)` 失败：Windows 初始化的仓库把
+  gradlew 记成 100644。已改 workflow 为 `bash gradlew` 并把 mode 补为 100755，
+  最终提交 223473d0，二次构建 success。Kotlin 代码本身无编译错误。
+- 下面保留的是过程排错记录，不需要再执行。
+
+【当前状态 · 已实测】
+- 网络已恢复，不用换电脑：git ls-remote 能读到 GitHub 官方仓库 HEAD，
+  目标空仓库 HTTPS 端点返回 200，带代理 / 直连都通。
+- 本地工作仓库 goutoujunshi-jev-chat
+  已提交 1bc4980（440 文件，工作树干净），目前**没有任何 remote**。
+- GitHub 空仓库已建好：clearlove6938/goutoujunshi-geren（Public，三个初始化项都没勾）。
+- 唯一前置条件：认证。本机有 Git Credential Manager 但无缓存凭据，
+  首次 push 会弹浏览器让你授权；或给一个有 repo 权限的 PAT。
+- goutoujunshi-jev-chat.bundle（16 MB）现在只是备份 / 换机方案。
+
+【第 1 步：准备本地仓库（二选一）】
+路径 A（推荐，本机直接做）：
+cd goutoujunshi-jev-chat
+git log --oneline -1
+git remote -v
+→ 应显示 1bc4980 ...；remote -v 无输出 = 没有 origin。
+
+路径 B（换一台电脑时）：
+git clone -b main goutoujunshi-jev-chat.bundle goutoujunshi-jev-chat
+cd goutoujunshi-jev-chat
+git log --oneline -1
+git remote -v
+→ 此时 origin 指向 .bundle 文件，不是空。
+
+【第 2 步：空仓库（已完成，可跳过）】
+已建好：https://github.com/clearlove6938/goutoujunshi-geren
+在 Quick setup 页只需要点 HTTPS 地址行最右侧的「复制」小图标，拿到：
+https://github.com/clearlove6938/goutoujunshi-geren.git
+页面下半部分 GitHub 自动给的两段命令不要照抄（见第 3 步）。
+以后另建：https://github.com/new（或右上角 ＋▼ → New repository；
+中间 Ask 输入框下的 ＋ 不是）；不要勾 README / .gitignore / license。
+
+【第 3 步：推送】
+cd goutoujunshi-jev-chat
+git remote add origin https://github.com/clearlove6938/goutoujunshi-geren.git 2>/dev/null || git remote set-url origin https://github.com/clearlove6938/goutoujunshi-geren.git
+git remote -v
+git push -u origin main
+（第一行两条路径都通用：无 origin 就 add，已有就 set-url，不会报 already exists。）
+
+注意：
+- 本机仓库无 remote，所以用 remote add 是对的；
+  只有「从 bundle clone」出来的仓库才必须 set-url。
+- GitHub 页面给的 `git branch -M main` 不需要，本来就是 main。
+- 首次 push 弹浏览器授权点一下即可；用 PAT 时用户名填账号名、密码填 PAT。
+- 【19:58 实测诊断】`git ls-remote` 通 ≠ `git push` 通：
+  带代理 push → CONNECT tunnel failed 502 / Empty reply from server（代理只放行 GET，挡 POST 大包）；
+  去代理直连 → 有时能走到「could not read Username」（网络已到 GitHub），有时 21s 超时连不上；
+  强制 http.version=HTTP/1.1 无改善。所以本机自动 push 不稳定，且**无论如何仍缺认证**。
+- 去掉代理直连的完整命令：
+  env -u HTTP_PROXY -u HTTPS_PROXY -u http_proxy -u https_proxy git push -u origin main
+- 最确定的路：给一个 repo 权限的 PAT，改走 api.github.com 的 REST Git Data API
+  （该域名稳定 200，可完全绕开被挡的 git 端点），一次上传完并触发 Actions。
+
+【第 4 步：等 CI 出包】
+push 会自动触发 Platform preview packages。
+打开 https://github.com/clearlove6938/goutoujunshi-geren/actions
+（就是仓库页顶部的 Actions 标签）
+点最新一次运行，等 android job 变绿（约 5-15 分钟，要装 Android SDK 35）。
+页面底部 Artifacts → 下载 goutoujunshi-jev-chat-android-debug → 解压出 app-debug.apk。
+若 Actions 没有运行记录，点 Run workflow 手动跑一次，release_tag 留空。
+
+【第 5 步：装到手机】
+把 app-debug.apk 传到手机（微信发给自己 / 数据线 / 手机浏览器），允许安装未知来源应用。
+要求 Android 11+、ARM64。若与旧版签名不一致需先卸载，卸载会清掉已存的 Key 和配置，先记下来。
+装好后：设置页配好模型接口 → 打开「使用完整狗头军师 Skill」。
+官方 Releases 的现成 APK 没有这个开关，必须用本次构建的包。
+
+【可能出问题】
+- android job 报 `./gradlew: Permission denied` (exit 126)：已修复，见顶部「已完成」。
+  若以后在 Windows 上重新初始化仓库，记得 `git update-index --chmod=+x
+  integrations/jev_android/gradlew`，或在 workflow 里用 `bash gradlew`。
+- Artifacts 需要登录 GitHub 才能下载。
+- 安卓版不支持微信截图；用 QQ / X / 飞书 / Soul 走手动截屏流程。
+- error: remote origin already exists → 说明走的是 bundle clone 路径，改用 set-url。
+- 生成 PAT 时跳到 "Confirm access" 页、红字 "Sudo authentication failed."：
+  这是 GitHub 的 sudo mode（敏感操作二次验身份），不是封号，也不是推送失败。
+  红字只表示上一次密码 / 2FA 没通过；点绿色 "Verify via email" → 绑定邮箱收验证码
+  → 验证后回到 Settings 继续生成 PAT。sudo 通过后几小时内不再重复询问。
+  不想走 sudo：可完全不要 PAT，改在自己终端跑一次 `git push` 并点 GCM 的浏览器授权，
+  OAuth token 会缓存到 Windows 凭据管理器（普通授权，不触发 sudo），之后由我用
+  api.github.com REST 完成上传；这样 PAT 也不用交给别人。
+
+【内容校验】
+skills/goutoujunshi/                              完整上游 Skill 包（63 文件，MIT）
+integrations/jev_android/.../assets/goutou_skill/  APK 内置资源（51 文件）
+integrations/jev_mac/core.py                      GOUTOU_SKILL_MODE=builtin|full 开关
+scripts/sync_android_skill.py                    资源生成脚本（幂等）
+181 个 Python 测试全绿、validate_skill.py passed（已在本地验证）
