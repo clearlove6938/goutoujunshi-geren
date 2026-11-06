@@ -213,6 +213,16 @@ class Prefs(context: Context, prefsName: String = PREFS_MAIN) {
         get() = sp.getInt(K_OPACITY, 92).coerceIn(60, 100)
         set(v) = sp.edit().putInt(K_OPACITY, v.coerceIn(60, 100)).apply()
 
+    /**
+     * "悬浮球常驻": never auto-hide the bubble on our own screens, the launcher,
+     * system UI, or when the conversation whitelist rejects a title. Default off
+     * keeps the original on-demand behaviour. The master switch (enabled) still
+     * wins: turning the assistant off removes the bubble either way.
+     */
+    var bubbleAlwaysOn: Boolean
+        get() = sp.getBoolean(K_BUBBLE_ALWAYS_ON, false)
+        set(v) = sp.edit().putBoolean(K_BUBBLE_ALWAYS_ON, v).apply()
+
     /** Remembered vertical position of the bubble (px); -1 = default. */
     var bubbleY: Int
         get() = sp.getInt(K_BUBBLE_Y, -1)
@@ -306,6 +316,7 @@ class Prefs(context: Context, prefsName: String = PREFS_MAIN) {
         private const val K_BUBBLE_X = "bubble_x"
         private const val K_AUTO = "auto_analyze"
         private const val K_FULL_SKILL = "full_skill_enabled"
+        private const val K_BUBBLE_ALWAYS_ON = "bubble_always_on"
 
         const val PROVIDER_OPENROUTER = "openrouter"
         const val PROVIDER_TYPESAFE = "typesafe"

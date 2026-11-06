@@ -412,6 +412,9 @@ class SettingsActivity : AppCompatActivity() {
         // =================== 外观 ===================
         root.addView(section("外观"))
         val card3 = card()
+        val alwaysOnRow = toggleRow("悬浮球常驻（任何界面都不自动隐藏）", prefs.bubbleAlwaysOn)
+        card3.addView(alwaysOnRow)
+        card3.addView(text("开启后，桌面、系统界面、本 App 设置页也不再自动收起悬浮球；白名单不匹配的会话仍不分析，但球保留。微信里也会显示球，但这一版仍无法截取微信聊天画面。关闭时恢复按需隐藏；首页「助手已开启」总开关关掉时球依然会消失。", 11f, sub))
         val opacityLabel = label("悬浮窗不透明度：${prefs.overlayOpacity}%")
         card3.addView(opacityLabel)
         card3.addView(text("越低越透，越能看清下面的聊天", 12f, sub))
@@ -486,6 +489,7 @@ class SettingsActivity : AppCompatActivity() {
             prefs.contextHistoryCount =
                 ctxCountEdit.text.toString().trim().toIntOrNull()?.coerceIn(0, 100) ?: 30
             prefs.overlayOpacity = seek.progress + 60
+            prefs.bubbleAlwaysOn = (alwaysOnRow.tag as? Boolean) ?: false
             Toast.makeText(this, "已保存", Toast.LENGTH_SHORT).show()
         })
 

@@ -59,10 +59,14 @@ internal fun shouldParkIdleBubble(
     foregroundPackage: String?,
     ownPackage: String,
     wechatPackage: String,
-    bubbleShowing: Boolean
+    bubbleShowing: Boolean,
+    alwaysOn: Boolean = false
 ): Boolean {
     val pkg = foregroundPackage ?: return false
     if (bubbleShowing) return false
+    // "悬浮球常驻" is an explicit request to keep the bubble on EVERY screen,
+    // including our own settings pages, the launcher and system UI.
+    if (alwaysOn) return true
     if (pkg == ownPackage || pkg == wechatPackage) return false
     if (pkg.contains("launcher", ignoreCase = true) ||
         pkg == "com.miui.home" || pkg == "com.android.systemui") return false
@@ -302,7 +306,9 @@ open class ChatCaptureService : AccessibilityService() {
                     fg.contains("launcher", ignoreCase = true) ||
                     fg == "com.miui.home" ||
                     fg == "com.android.systemui"
-                if (drop) overlay?.hide()
+                // Always-on wins over the drop list: keep (or restore) the
+                // bubble on the launcher / system UI / our own screens too.
+                if (drop && !prefs.bubbleAlwaysOn) overlay?.hide()
                 else if (changed || overlay?.isShowing() != true) overlay?.showIdle(null)
                 return
             }
@@ -327,7 +333,7 @@ open class ChatCaptureService : AccessibilityService() {
      *  judgment, review editor or candidate list). */
     private fun parkIdleBubble(pkg: String?) {
         if (!shouldParkIdleBubble(pkg, packageName, WECHAT_PACKAGE,
-                overlay?.isShowing() == true)) return
+                overlay?.isShowing() == true, alwaysOn = prefs.bubbleAlwaysOn)) return
         foregroundPkg = pkg
         overlay?.showIdle(null)
     }
@@ -342,9 +348,10 @@ open class ChatCaptureService : AccessibilityService() {
         if (adapter == null) {
             // Rebinding the service can miss the chat's WINDOW_STATE_CHANGED.
             // Keep the explicit screenshot menu available without capturing.
-            if (pkg != null && pkg != packageName && pkg != WECHAT_PACKAGE &&
-                pkg != "com.android.systemui" && pkg != "com.miui.home" &&
-                !pkg.contains("launcher", ignoreCase = true)) {
+            if (pkg != null && (prefs.bubbleAlwaysOn ||
+                (pkg != packageName && pkg != WECHAT_PACKAGE &&
+                 pkg != "com.android.systemui" && pkg != "com.miui.home" &&
+                 !pkg.contains("launcher", ignoreCase = true)))) {
                 foregroundPkg = pkg
                 if (overlay?.isShowing() != true) overlay?.showIdle(null)
             }
@@ -359,7 +366,12 @@ open class ChatCaptureService : AccessibilityService() {
         // Stabilize the title BEFORE anything below reads it: some apps (X) show
         // a transient "连接中…" title for a moment right after opening a thread.
         val snapshot = stabilizeTitle(pkg ?: "", rawSnapshot)
-        if (!prefs.isAllowed(snapshot.title)) { overlay?.hide(); return }
+        // A whitelist miss suppresses analysis, not the bubble — unless the
+        // user is running the default on-demand mode, where it hides it too.
+        if (!prefs.isAllowed(snapshot.title)) {
+            if (prefs.bubbleAlwaysOn) parkIdleBubble(pkg) else overlay?.hide()
+            return
+        }
         if (pkg != activePkg || currentSnapshot?.title != snapshot.title) {
             cancelWork()
             activePkg = pkg
@@ -879,7 +891,12 @@ open class ChatCaptureService : AccessibilityService() {
             if (manual) overlay?.showError("这一屏没认出文字")
             return
         }
-        if (!prefs.isAllowed(snapshot.title)) { overlay?.hide(); return }
+        // A whitelist miss suppresses analysis, not the bubble — unless the
+        // user is running the default on-demand mode, where it hides it too.
+        if (!prefs.isAllowed(snapshot.title)) {
+            if (prefs.bubbleAlwaysOn) parkIdleBubble(pkg) else overlay?.hide()
+            return
+        }
 
         if (pkg.isNotEmpty() && pkg != activePkg) { activePkg = pkg; lastSignature = "" }
         currentSnapshot = snapshot

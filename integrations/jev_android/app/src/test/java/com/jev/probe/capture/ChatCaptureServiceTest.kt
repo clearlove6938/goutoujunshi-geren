@@ -63,4 +63,27 @@ class ChatCaptureServiceTest {
         assertFalse(shouldParkIdleBubble("com.tencent.mobileqq",
             "com.jev.probe", "com.tencent.mm", bubbleShowing = true))
     }
+
+    @Test fun alwaysOnParksTheBubbleEvenOnNormallyDroppedScreens() {
+        for (pkg in listOf("com.jev.probe", "com.tencent.mm", "com.miui.home",
+                "com.android.systemui", "com.oppo.launcher")) {
+            assertTrue("expected a bubble on " + pkg,
+                shouldParkIdleBubble(pkg, "com.jev.probe", "com.tencent.mm",
+                    bubbleShowing = false, alwaysOn = true))
+        }
+    }
+
+    @Test fun alwaysOnStillNeedsAPackageAndNeverReplacesAShowingBubble() {
+        assertFalse(shouldParkIdleBubble(null, "com.jev.probe", "com.tencent.mm",
+            bubbleShowing = false, alwaysOn = true))
+        assertFalse(shouldParkIdleBubble("com.jev.probe", "com.jev.probe", "com.tencent.mm",
+            bubbleShowing = true, alwaysOn = true))
+    }
+
+    @Test fun defaultModeStillDropsOurOwnScreens() {
+        assertFalse(shouldParkIdleBubble("com.jev.probe", "com.jev.probe",
+            "com.tencent.mm", bubbleShowing = false))
+        assertFalse(shouldParkIdleBubble("com.miui.home", "com.jev.probe",
+            "com.tencent.mm", bubbleShowing = false))
+    }
 }
