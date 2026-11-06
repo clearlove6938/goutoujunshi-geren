@@ -141,7 +141,8 @@ push 会自动触发 Platform preview packages。
   若以后在 Windows 上重新初始化仓库，记得 `git update-index --chmod=+x
   integrations/jev_android/gradlew`，或在 workflow 里用 `bash gradlew`。
 - Artifacts 需要登录 GitHub 才能下载。
-- 安卓版不支持微信截图；用 QQ / X / 飞书 / Soul 走手动截屏流程。
+- 微信截图在本分支是实验性开关、默认关：设置 → 分析 → 允许微信截图，
+  开启后走系统截屏授权；其余应用用 QQ / X / 飞书 / Soul 走手动截屏流程。
 - error: remote origin already exists → 说明走的是 bundle clone 路径，改用 set-url。
 - 生成 PAT 时跳到 "Confirm access" 页、红字 "Sudo authentication failed."：
   这是 GitHub 的 sudo mode（敏感操作二次验身份），不是封号，也不是推送失败。

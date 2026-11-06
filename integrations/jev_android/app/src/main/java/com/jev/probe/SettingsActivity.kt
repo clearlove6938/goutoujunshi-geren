@@ -360,7 +360,10 @@ class SettingsActivity : AppCompatActivity() {
             "DeepSeek Flash 可用于图片识别。", 11f, sub))
         val ocrFallbackRow = toggleRow("树读不到正文时用 OCR 兜底", prefs.ocrFallback)
         card2.addView(ocrFallbackRow)
-        card2.addView(text("可见聊天画面的文字可用本地 OCR 识别；当前 Android 预览版无法截取微信聊天画面，暂不支持微信。", 11f, sub))
+        card2.addView(text("可见聊天画面的文字可用本地 OCR 识别；识别原文和说话人仍需人工核对。", 11f, sub))
+        val wechatRow = toggleRow("允许微信截图（实验性）", prefs.wechatCaptureEnabled)
+        card2.addView(wechatRow)
+        card2.addView(text("开启后可在微信聊天里长按悬浮球 →「截屏识别一次」。微信固定走系统截屏，每次会弹一次 Android 授权；点「立即开始」后回到聊天。微信新版会隐藏无障碍节点文字，所以不做自动读屏，只做整屏 OCR。建议识图方式用 ML Kit 本地，别把聊天截图发给云端视觉模型。支付、收款码等受保护页面会返回全黑画面并提示。", 11f, sub))
         val ocrAutoRow = toggleRow("OCR 模式自动分析", prefs.ocrAutoAnalyze)
         card2.addView(ocrAutoRow)
         card2.addView(text("关闭时自动 OCR 只亮悬浮球，点分析后核对；手动截屏仍直接打开核对页。", 11f, sub))
@@ -414,7 +417,7 @@ class SettingsActivity : AppCompatActivity() {
         val card3 = card()
         val alwaysOnRow = toggleRow("悬浮球常驻（任何界面都不自动隐藏）", prefs.bubbleAlwaysOn)
         card3.addView(alwaysOnRow)
-        card3.addView(text("开启后，桌面、系统界面、本 App 设置页也不再自动收起悬浮球；白名单不匹配的会话仍不分析，但球保留。微信里也会显示球，但这一版仍无法截取微信聊天画面。关闭时恢复按需隐藏；首页「助手已开启」总开关关掉时球依然会消失。", 11f, sub))
+        card3.addView(text("开启后，桌面、系统界面、本 App 设置页也不再自动收起悬浮球；白名单不匹配的会话仍不分析，但球保留。微信里也会显示球；要不要真的截微信，由「分析 → 允许微信截图」单独控制。关闭时恢复按需隐藏；首页「助手已开启」总开关关掉时球依然会消失。", 11f, sub))
         val opacityLabel = label("悬浮窗不透明度：${prefs.overlayOpacity}%")
         card3.addView(opacityLabel)
         card3.addView(text("越低越透，越能看清下面的聊天", 12f, sub))
@@ -484,6 +487,7 @@ class SettingsActivity : AppCompatActivity() {
             prefs.captureMethod = if (captureMethodIdx == 1) Prefs.CAPTURE_SYSTEM else Prefs.CAPTURE_ACCESSIBILITY
             prefs.ocrEngine = if (ocrEngineIdx == 1) Prefs.OCR_VISION else Prefs.OCR_MLKIT
             prefs.ocrAutoAnalyze = (ocrAutoRow.tag as? Boolean) ?: false
+            prefs.wechatCaptureEnabled = (wechatRow.tag as? Boolean) ?: false
             prefs.contextEnabled = (ctxRow.tag as? Boolean) ?: false
             prefs.fullSkillEnabled = (fullSkillRow.tag as? Boolean) ?: false
             prefs.contextHistoryCount =

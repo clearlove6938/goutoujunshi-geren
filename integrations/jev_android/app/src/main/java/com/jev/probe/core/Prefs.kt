@@ -214,6 +214,17 @@ class Prefs(context: Context, prefsName: String = PREFS_MAIN) {
         set(v) = sp.edit().putInt(K_OPACITY, v.coerceIn(60, 100)).apply()
 
     /**
+     * "允许微信截图": opt in to the manual whole-screen capture path inside
+     * WeChat. Upstream disabled it because accessibility screenshots come back
+     * all black on some emulator builds; when enabled we always use the user
+     * consented MediaProjection capture instead. Default off keeps the old
+     * behaviour and never touches WeChat without an explicit choice.
+     */
+    var wechatCaptureEnabled: Boolean
+        get() = sp.getBoolean(K_WECHAT_CAPTURE, false)
+        set(v) = sp.edit().putBoolean(K_WECHAT_CAPTURE, v).apply()
+
+    /**
      * "悬浮球常驻": never auto-hide the bubble on our own screens, the launcher,
      * system UI, or when the conversation whitelist rejects a title. Default off
      * keeps the original on-demand behaviour. The master switch (enabled) still
@@ -317,6 +328,7 @@ class Prefs(context: Context, prefsName: String = PREFS_MAIN) {
         private const val K_AUTO = "auto_analyze"
         private const val K_FULL_SKILL = "full_skill_enabled"
         private const val K_BUBBLE_ALWAYS_ON = "bubble_always_on"
+        private const val K_WECHAT_CAPTURE = "wechat_capture_enabled"
 
         const val PROVIDER_OPENROUTER = "openrouter"
         const val PROVIDER_TYPESAFE = "typesafe"

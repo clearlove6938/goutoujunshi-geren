@@ -53,21 +53,24 @@ internal fun shouldReviewOcr(manual: Boolean, autoAnalyze: Boolean, latestFrom: 
  * reachable no matter what the app's node tree looks like.
  *
  * Excluded are places where a bubble would only be in the way: our own screens,
- * WeChat (unsupported on this Android preview), the launcher and system UI.
+ * the launcher and system UI. WeChat is excluded too until the user explicitly
+ * opts in with "允许微信截图" (allowWechat), because its node tree is usually
+ * unreadable and the bubble would otherwise have nothing it can do.
  */
 internal fun shouldParkIdleBubble(
     foregroundPackage: String?,
     ownPackage: String,
     wechatPackage: String,
     bubbleShowing: Boolean,
-    alwaysOn: Boolean = false
+    alwaysOn: Boolean = false,
+    allowWechat: Boolean = false
 ): Boolean {
     val pkg = foregroundPackage ?: return false
     if (bubbleShowing) return false
     // "悬浮球常驻" is an explicit request to keep the bubble on EVERY screen,
     // including our own settings pages, the launcher and system UI.
     if (alwaysOn) return true
-    if (pkg == ownPackage || pkg == wechatPackage) return false
+    if (pkg == ownPackage || (pkg == wechatPackage && !allowWechat)) return false
     if (pkg.contains("launcher", ignoreCase = true) ||
         pkg == "com.miui.home" || pkg == "com.android.systemui") return false
     return true
@@ -321,7 +324,7 @@ open class ChatCaptureService : AccessibilityService() {
                 if (changed) cancelWork()
                 foregroundPkg = fg
                 val drop = fg == packageName ||
-                    fg == WECHAT_PACKAGE ||
+                    (fg == WECHAT_PACKAGE && !prefs.wechatCaptureEnabled) ||
                     fg.contains("launcher", ignoreCase = true) ||
                     fg == "com.miui.home" ||
                     fg == "com.android.systemui"
@@ -352,7 +355,8 @@ open class ChatCaptureService : AccessibilityService() {
      *  judgment, review editor or candidate list). */
     private fun parkIdleBubble(pkg: String?) {
         if (!shouldParkIdleBubble(pkg, packageName, WECHAT_PACKAGE,
-                overlay?.isShowing() == true, alwaysOn = prefs.bubbleAlwaysOn)) return
+                overlay?.isShowing() == true, alwaysOn = prefs.bubbleAlwaysOn,
+                allowWechat = prefs.wechatCaptureEnabled)) return
         foregroundPkg = pkg
         overlay?.showIdle(null)
     }
@@ -368,7 +372,7 @@ open class ChatCaptureService : AccessibilityService() {
             // Rebinding the service can miss the chat's WINDOW_STATE_CHANGED.
             // Keep the explicit screenshot menu available without capturing.
             if (pkg != null && (prefs.bubbleAlwaysOn ||
-                (pkg != packageName && pkg != WECHAT_PACKAGE &&
+                (pkg != packageName && (pkg != WECHAT_PACKAGE || prefs.wechatCaptureEnabled) &&
                  pkg != "com.android.systemui" && pkg != "com.miui.home" &&
                  !pkg.contains("launcher", ignoreCase = true)))) {
                 foregroundPkg = pkg
@@ -610,10 +614,11 @@ open class ChatCaptureService : AccessibilityService() {
     // ------------------------------------------------------------------ OCR
 
     /**
-     * Bubble menu → "截屏识别一次". Works on ANY app, adapted or not: one whole
-     * screen shot, every line OCR'd, lines grouped into pseudo-bubbles by line
-     * spacing. Nobody can tell who said what this way, so everything is filed as
-     * the other person and the panel says so.
+     * Bubble menu → "截屏识别一次". Works on ANY app, adapted or not; WeChat
+     * needs the explicit "允许微信截图" opt-in. One whole screen shot, every line
+     * OCR'd, lines grouped into pseudo-bubbles by line spacing and split into
+     * me/other by their left/right gutters. The review screen is still the
+     * authority on who said what.
      */
     private fun ocrCaptureManual(mode: String = prefs.captureMethod) {
         if (!session.current.isActive()) return
@@ -624,10 +629,15 @@ open class ChatCaptureService : AccessibilityService() {
         if (pkg.isBlank() || pkg == packageName) {
             overlay?.toast("请先切到要识别的聊天应用"); return
         }
-        if (pkg == WECHAT_PACKAGE) {
-            overlay?.toast("当前 Android 版无法截取微信聊天画面，暂不支持微信")
+        val wechat = pkg == WECHAT_PACKAGE
+        if (wechat && !prefs.wechatCaptureEnabled) {
+            overlay?.toast("微信截图未开启：设置 → 分析 → 允许微信截图")
             return
         }
+        // WeChat hides node text from accessibility services, and accessibility
+        // screenshots come back all black on many builds. The consented system
+        // capture is the only reliable frame there, so force it for this app.
+        val effectiveMode = if (wechat) Prefs.CAPTURE_SYSTEM else mode
         // Top bar text, if this app has one we can read; else the first OCR line.
         val title = root?.let {
             findTitleInActionBar(it, Int.MAX_VALUE, resources.displayMetrics.widthPixels, resources, 0.15, 0.85)
@@ -636,8 +646,10 @@ open class ChatCaptureService : AccessibilityService() {
         activePkg = pkg
         foregroundPkg = pkg
         manualContentFingerprint = root?.let { contentFingerprint(it) }
-        if (mode == Prefs.CAPTURE_SYSTEM) externalCapture(title, pkg, root)
-        else ocrCapture(title, emptyList(), pkg, manual = true)
+        if (effectiveMode == Prefs.CAPTURE_SYSTEM) {
+            if (wechat) overlay?.toast("微信使用系统截屏：点「立即开始」后返回聊天")
+            externalCapture(title, pkg)
+        } else ocrCapture(title, emptyList(), pkg, manual = true)
     }
 
     private fun contentFingerprint(root: AccessibilityNodeInfo): String {
@@ -659,9 +671,11 @@ open class ChatCaptureService : AccessibilityService() {
             .digest(text.toString().toByteArray()).joinToString("") { "%02x".format(it) }
     }
 
-    private fun externalCapture(title: String?, pkg: String, root: AccessibilityNodeInfo?) {
+    /** Root can be null: WeChat often exposes no readable node tree. Readiness
+     *  is checked against the live window just before the consent activity. */
+    private fun externalCapture(title: String?, pkg: String) {
         val token = session.current
-        if (!token.isActive() || root == null) return
+        if (!token.isActive()) return
         var fingerprint = ""
         ocrBusy = true
         var id = ""
@@ -670,9 +684,12 @@ open class ChatCaptureService : AccessibilityService() {
             isActive = { session.isCurrent(token) },
             readiness = {
                 val live = rootInActiveWindow
-                val livePkg = live?.packageName?.toString()
+                // WeChat (and some hardened ROMs) can expose an event package
+                // but no node tree at all. Fall back to the last foreground
+                // package and treat "no tree" as unchanged content.
+                val livePkg = live?.packageName?.toString() ?: foregroundPkg
                 captureReadiness(livePkg, packageName, pkg,
-                    live != null && livePkg == pkg && contentFingerprint(live) == fingerprint)
+                    livePkg == pkg && (live == null || contentFingerprint(live) == fingerprint))
             },
             setHidden = { overlay?.setHiddenForShot(it) },
             onResult = { result ->
@@ -697,11 +714,12 @@ open class ChatCaptureService : AccessibilityService() {
         main.postDelayed({
             if (CaptureHandoff.get(id) == null) return@postDelayed
             val live = rootInActiveWindow
-            if (live?.packageName?.toString() != pkg) {
+            val livePkg = live?.packageName?.toString() ?: foregroundPkg
+            if (livePkg != pkg) {
                 CaptureHandoff.complete(id, ScreenCapture.Result.Failed(-10, "请返回目标聊天后重试"))
                 return@postDelayed
             }
-            fingerprint = contentFingerprint(live)
+            fingerprint = if (live != null) contentFingerprint(live) else pkg
             manualContentFingerprint = fingerprint
             runCatching {
                 startActivity(Intent(this, CaptureInputActivity::class.java)

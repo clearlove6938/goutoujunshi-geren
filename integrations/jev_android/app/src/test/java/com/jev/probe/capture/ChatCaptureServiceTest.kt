@@ -87,6 +87,30 @@ class ChatCaptureServiceTest {
             "com.tencent.mm", bubbleShowing = false))
     }
 
+    @Test fun wechatOptInParksTheBubbleOnlyWhenOptedIn() {
+        assertFalse("opt-out must keep WeChat untouched",
+            shouldParkIdleBubble("com.tencent.mm", "com.jev.probe",
+                "com.tencent.mm", bubbleShowing = false))
+        assertTrue(shouldParkIdleBubble("com.tencent.mm", "com.jev.probe",
+            "com.tencent.mm", bubbleShowing = false, allowWechat = true))
+        assertFalse("a showing bubble must never be replaced",
+            shouldParkIdleBubble("com.tencent.mm", "com.jev.probe",
+                "com.tencent.mm", bubbleShowing = true, allowWechat = true))
+    }
+
+    @Test fun wechatOptInDoesNotUnlockOtherDroppedScreens() {
+        assertFalse(shouldParkIdleBubble("com.jev.probe", "com.jev.probe",
+            "com.tencent.mm", bubbleShowing = false, allowWechat = true))
+        assertFalse(shouldParkIdleBubble("com.miui.home", "com.jev.probe",
+            "com.tencent.mm", bubbleShowing = false, allowWechat = true))
+        assertFalse(shouldParkIdleBubble("com.oppo.launcher", "com.jev.probe",
+            "com.tencent.mm", bubbleShowing = false, allowWechat = true))
+        assertFalse(shouldParkIdleBubble(null, "com.jev.probe",
+            "com.tencent.mm", bubbleShowing = false, allowWechat = true))
+        assertTrue(shouldParkIdleBubble("com.tencent.mm", "com.jev.probe",
+            "com.tencent.mm", bubbleShowing = false, allowWechat = true, alwaysOn = true))
+    }
+
     // 1080px screen: left gutter ~140, right gutter ~940, so a short outgoing
     // line hugs the right edge while its left edge is far from the left gutter.
     @Test fun rightHuggingOcrLineIsMine() {

@@ -47,7 +47,7 @@
 | --- | --- | --- |
 | **macOS** | [源码预览 ZIP](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/releases/latest/download/goutoujunshi-jev-chat-mac.zip) · [使用说明](integrations/jev_mac/README.md) | 微信读屏与草稿填入；需要 Python 3.12、uv，暂无签名 `.app`。解压后依次运行 `安装依赖.command`、`离线演示.command`、`启动.command`。 |
 | **Windows** | [预览 ZIP](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/releases/latest/download/goutoujunshi-jev-chat-windows-preview.zip) · [使用说明](integrations/jev_windows/README.md) | Windows 10 1903+ / 11，微信 4.x；完整解压后运行 `.exe`。**QQNT 9.x 支持需使用新版源码或下方 Actions 构建**。 |
-| **Android** | [调试 APK](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/releases/latest/download/goutoujunshi-jev-chat-android-debug.apk) · [图文教程](documentation/guides/android-deepseek/README.md) | Android 11+；Soul 等应用可走手动截图流程，需按设备验证。**暂不支持微信**。 |
+| **Android** | [调试 APK](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/releases/latest/download/goutoujunshi-jev-chat-android-debug.apk) · [图文教程](documentation/guides/android-deepseek/README.md) | Android 11+；Soul 等应用可走手动截图流程，需按设备验证。本分支另有**实验性微信截图开关**，需手动开启并走系统截屏授权。 |
 | **iOS** | [中文安装说明](integrations/jev_ios/README.md) · [English guide](integrations/jev_ios/README_EN.md) | iOS 16+；需在 Mac 上用 Xcode 编译、签名。支持本地拼音打字、截图识别与回复填入；暂无公开 IPA、TestFlight 或 App Store 下载。 |
 
 Windows QQ 仅适配 QQNT 主面板内嵌单聊，以浅色皮肤、100% 缩放为基准；群聊与独立聊天窗口暂不支持。贡献者报告已在 Windows 10 上验证识别与填入。请从 [Actions 最新成功构建](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/actions/workflows/platform-build.yml)下载对应 Windows Artifacts，或按使用说明运行源码；Release ZIP 不随源码更新自动替换。
@@ -92,12 +92,13 @@ python3 -B -m unittest discover -s tests -q
 
 ## 本分支：完整教程与二开功能
 
-本仓库在 upstream Jev Chat 基础上加入了**完整狗头军师 Skill 独立包**、Mac / Android 双端 Skill 切换、Android 悬浮球兜底与常驻开关，以及 OCR 说话人分边。完整资料见 [文档索引](documentation/guides/README.md)：
+本仓库在 upstream Jev Chat 基础上加入了**完整狗头军师 Skill 独立包**、Mac / Android 双端 Skill 切换、Android 悬浮球兜底与常驻开关、OCR 说话人分边，以及**默认关闭的实验性微信截图开关**（走系统截屏授权 + 整屏本地 OCR）。完整资料见 [文档索引](documentation/guides/README.md)：
 
 - [完整使用教程](documentation/guides/完整使用教程.md)：从安装、三项权限、三处接口配置，到跑通一轮与人工核对
 - [功能总览](documentation/guides/功能总览.md)：逐模块功能清单，标注【上游】/【新增】/【修复】
 - [悬浮窗排障图文卡](documentation/guides/悬浮窗排障-图文卡.html) · [路线 B 出包图文教程](documentation/guides/路线B-图文教程.html)：单文件离线 HTML，下载后用浏览器打开
 - [狗头军师-手机常驻笔记.txt](documentation/guides/狗头军师-手机常驻笔记.txt)：不编译也能注入军师规则的精简版
+- [微信截图（实验性）](documentation/guides/完整使用教程.md)：需先开启开关、走系统截屏授权，支付类受保护页面仍不可截
 - [界面点击位置标注图](documentation/guides/README.md#github-界面点击位置标注图)：新建仓库、空仓库页、PAT sudo 二次验证三张截图
 - [路线 B 推送与出包操作卡](documentation/guides/路线B-推送与出包操作卡.txt)：纯文字命令与四次出包排错记录
 
