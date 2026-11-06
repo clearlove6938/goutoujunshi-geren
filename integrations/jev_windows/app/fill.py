@@ -1,0 +1,132 @@
+# -*- coding: utf-8 -*-
+"""把选中的候选填进聊天输入框：写剪贴板 → 点输入框 → Ctrl+V。绝不发回车、绝不点发送。"""
+import ctypes
+import ctypes.wintypes as w
+import time
+
+from app import profiles
+
+u32, k32 = ctypes.windll.user32, ctypes.windll.kernel32
+u32.GetForegroundWindow.restype = ctypes.c_void_p
+u32.IsWindow.argtypes = [ctypes.c_void_p]
+u32.IsWindowVisible.argtypes = [ctypes.c_void_p]
+u32.SetForegroundWindow.argtypes = [ctypes.c_void_p]
+u32.SetFocus.argtypes = [ctypes.c_void_p]
+u32.GetWindowThreadProcessId.argtypes = [ctypes.c_void_p, ctypes.c_void_p]
+u32.GetWindowRect.argtypes = [ctypes.c_void_p, ctypes.POINTER(w.RECT)]
+ctypes.windll.dwmapi.DwmGetWindowAttribute.argtypes = [
+    ctypes.c_void_p, ctypes.c_uint, ctypes.c_void_p, ctypes.c_uint]
+
+# 64 位下 ctypes.windll 默认 restype 是 32 位 c_int，而 GlobalAlloc 返回 64 位 HGLOBAL——
+# 不声明类型句柄会被截断成垃圾值，GlobalLock(垃圾) 返回 NULL，memmove(NULL,…) 就是
+# "access violation writing 0x0"。所有带句柄/指针的函数必须显式声明。
+k32.GlobalAlloc.restype = ctypes.c_void_p
+k32.GlobalAlloc.argtypes = [ctypes.c_uint, ctypes.c_size_t]
+k32.GlobalLock.restype = ctypes.c_void_p
+k32.GlobalLock.argtypes = [ctypes.c_void_p]
+k32.GlobalUnlock.argtypes = [ctypes.c_void_p]
+k32.GlobalFree.argtypes = [ctypes.c_void_p]
+u32.SetClipboardData.restype = ctypes.c_void_p
+u32.SetClipboardData.argtypes = [ctypes.c_uint, ctypes.c_void_p]
+
+
+def set_clipboard(text):
+    """写剪贴板。剪贴板可能被别的程序占着（剪贴板管理器、截图工具），重试几次。"""
+    data = text.encode("utf-16-le") + b"\0\0"
+    for attempt in range(10):
+        if not u32.OpenClipboard(None):
+            time.sleep(0.05)
+            continue
+        try:
+            u32.EmptyClipboard()
+            h = k32.GlobalAlloc(0x2, len(data))  # GMEM_MOVEABLE
+            if not h:
+                raise RuntimeError("GlobalAlloc 失败")
+            p = k32.GlobalLock(h)
+            if not p:
+                k32.GlobalFree(h)
+                raise RuntimeError("GlobalLock 失败")
+            ctypes.memmove(p, data, len(data))
+            k32.GlobalUnlock(h)
+            if not u32.SetClipboardData(13, h):  # CF_UNICODETEXT；成功后句柄归系统，不能 Free
+                k32.GlobalFree(h)
+                raise RuntimeError(f"SetClipboardData 失败 (attempt {attempt})")
+            return
+        finally:
+            u32.CloseClipboard()
+    raise RuntimeError("OpenClipboard 连续失败，剪贴板被其他程序占用")
+
+
+def fill(hwnd, area, text, app=profiles.WECHAT):
+    """area = 消息区 (x0, y0, x1, y1)；输入框点击点按应用偏移（见 profiles.fill_point，QQ 要跳过图标行）。"""
+    from app.capture import unminimize
+
+    name = profiles.app_name(app)
+    if not u32.IsWindow(hwnd) or not u32.IsWindowVisible(hwnd):
+        raise RuntimeError(f"{name}窗口已关闭或不可见")
+    if unminimize(hwnd):
+        time.sleep(0.15)  # 最小化时 DWM 给的是图标位置矩形：先还原，等布局铺好，再做坐标校验
+    r = w.RECT()
+    if ctypes.windll.dwmapi.DwmGetWindowAttribute(hwnd, 9, ctypes.byref(r), ctypes.sizeof(r)) != 0:  # 扩展边界，跟 WGC 帧对齐
+        u32.GetWindowRect(hwnd, ctypes.byref(r))
+    px, py = profiles.fill_point(area, app)
+    cx, cy = r.left + px, r.top + py
+    if not (r.left <= cx < r.right and r.top <= cy < r.bottom):
+        raise RuntimeError(f"输入坐标不在{name}窗口内，已取消填入")
+
+    # SetForegroundWindow 有前台窗口保护，普通后台进程会被拒；AttachThreadInput 绕过。
+    # 从最小化还原后一次调用常不生效（实测），所以轮询；还不行就点一下窗口标题栏——
+    # 鼠标点击是用户手势，系统必须放行激活（标题栏中段是拖动区，单击不触发按钮）。
+    if u32.GetForegroundWindow() != hwnd:
+        fg = u32.GetForegroundWindow()
+        fg_tid = u32.GetWindowThreadProcessId(fg, None)
+        our_tid = k32.GetCurrentThreadId()
+        u32.AttachThreadInput(our_tid, fg_tid, True)
+        u32.ShowWindow(hwnd, 9)  # SW_RESTORE
+        u32.BringWindowToTop(hwnd)
+        u32.SetForegroundWindow(hwnd)
+        u32.SetFocus(hwnd)
+        u32.AttachThreadInput(our_tid, fg_tid, False)
+        for _ in range(12):
+            if u32.GetForegroundWindow() == hwnd:
+                break
+            time.sleep(0.1)
+    if u32.GetForegroundWindow() != hwnd:
+        old = w.POINT()
+        u32.GetCursorPos(ctypes.byref(old))
+        u32.SetCursorPos((r.left + r.right) // 2, r.top + 18)
+        time.sleep(0.05)
+        u32.mouse_event(0x2, 0, 0, 0, 0)
+        u32.mouse_event(0x4, 0, 0, 0, 0)
+        u32.SetCursorPos(old.x, old.y)
+        for _ in range(6):
+            if u32.GetForegroundWindow() == hwnd:
+                break
+            time.sleep(0.1)
+    if u32.GetForegroundWindow() != hwnd:
+        raise RuntimeError(f"{name}没有成为前台窗口，已取消填入")
+
+    old = w.POINT()
+    u32.GetCursorPos(ctypes.byref(old))
+    u32.SetCursorPos(cx, cy)
+    time.sleep(0.05)
+    u32.mouse_event(0x2, 0, 0, 0, 0)  # 左键按下
+    u32.mouse_event(0x4, 0, 0, 0, 0)  # 抬起
+    time.sleep(0.05)
+    u32.SetCursorPos(old.x, old.y)
+    time.sleep(0.05)
+    if u32.GetForegroundWindow() != hwnd:
+        raise RuntimeError(f"填入前{name}失去焦点，已取消")
+    set_clipboard(text)
+    # 光标移到已有文本的绝对末尾：点击落在文字中间时 caret 会插在中间，
+    # 连续多次填入就串行错乱；Ctrl+End 保证新内容永远追加在最后
+    u32.keybd_event(0x11, 0, 0, 0)  # Ctrl 按下
+    u32.keybd_event(0x23, 0, 0, 0)  # End 按下（VK_END）
+    u32.keybd_event(0x23, 0, 2, 0)  # End 抬起
+    u32.keybd_event(0x11, 0, 2, 0)  # Ctrl 抬起
+    time.sleep(0.05)
+    u32.keybd_event(0x11, 0, 0, 0)  # Ctrl
+    u32.keybd_event(0x56, 0, 0, 0)  # V
+    u32.keybd_event(0x56, 0, 2, 0)
+    u32.keybd_event(0x11, 0, 2, 0)
+    # 到此为止。发不发、改不改，人来。
