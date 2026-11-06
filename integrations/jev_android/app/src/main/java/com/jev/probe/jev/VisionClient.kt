@@ -33,7 +33,12 @@ class VisionClient(private val prefs: Prefs) {
     fun extractDialog(imageBase64Jpeg: String): String = ask(
         imageBase64Jpeg,
         "你是聊天截图转写助手。把图中聊天气泡按从上到下的顺序转写成文本，" +
-            "每行一条，格式 `我：正文` 或 `对方：正文`。只输出转写结果，不要解释。"
+            "每行一条，格式严格为 `我：正文` 或 `对方：正文`，不要输出任何解释。\n" +
+            "说话人身份只按气泡位置判断，不要按文字内容猜测：" +
+            "靠屏幕右侧、头像在右侧的气泡是「我」；靠左侧、头像在左侧的气泡是「对方」。" +
+            "群聊里除「我」之外的所有人一律记为「对方」。\n" +
+            "忽略时间戳、系统提示、昵称、输入框、已读回执和表情说明，只转写气泡正文。" +
+            "如果某条实在分不清左右，写「对方：」。"
     )
 
     /** Generic single-question call against the image (used by the settings test). */

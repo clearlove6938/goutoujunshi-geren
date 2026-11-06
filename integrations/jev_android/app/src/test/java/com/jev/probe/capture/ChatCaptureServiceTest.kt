@@ -86,4 +86,25 @@ class ChatCaptureServiceTest {
         assertFalse(shouldParkIdleBubble("com.miui.home", "com.jev.probe",
             "com.tencent.mm", bubbleShowing = false))
     }
+
+    // 1080px screen: left gutter ~140, right gutter ~940, so a short outgoing
+    // line hugs the right edge while its left edge is far from the left gutter.
+    @Test fun rightHuggingOcrLineIsMine() {
+        assertTrue(ocrLineIsMine(700, 1030, 1080))
+    }
+
+    @Test fun incomingAndAmbiguousLongBubblesStayOther() {
+        assertFalse(ocrLineIsMine(160, 500, 1080))   // ordinary incoming line
+        assertFalse(ocrLineIsMine(160, 900, 1080))   // long incoming line must NOT flip to me
+        assertFalse(ocrLineIsMine(200, 1030, 1080))  // full-width line is ambiguous
+    }
+
+    @Test fun centredSystemTextIsNotMine() {
+        assertFalse(ocrLineIsMine(480, 600, 1080))
+    }
+
+    @Test fun unknownScreenWidthNeverClaimsMine() {
+        assertFalse(ocrLineIsMine(700, 1030, 0))
+        assertFalse(ocrLineIsMine(700, 1030, -1))
+    }
 }

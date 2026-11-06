@@ -73,6 +73,25 @@ internal fun shouldParkIdleBubble(
     return true
 }
 
+/**
+ * Weak side cue for a flat OCR read. ML Kit gives each text line's box in SCREEN
+ * coordinates but no bubble frames, so we compare the line's edges with the
+ * avatar gutters, like QQAdapter does: a line whose RIGHT edge hugs the right
+ * gutter while its LEFT edge stays well away from the left gutter is mine.
+ *
+ * Deliberately conservative: a long bubble (either side) can span most of the
+ * width, and mistaking the other person's words for my own is far worse than
+ * leaving them as "other". Uncertain lines stay "other" and the editable review
+ * screen remains the authority.
+ */
+internal fun ocrLineIsMine(left: Int, right: Int, screenWidth: Int): Boolean {
+    if (screenWidth <= 0) return false
+    val edge = (screenWidth * 0.13f).toInt()
+    val dl = kotlin.math.abs(left - edge)
+    val dr = kotlin.math.abs((screenWidth - edge) - right)
+    return dr < (screenWidth * 0.16f) && dl > (screenWidth * 0.25f)
+}
+
 internal enum class ReviewConfirmationState {
     WAIT_FOR_CHAT_WINDOW,
     CHAT_CURRENT,
@@ -788,10 +807,14 @@ open class ChatCaptureService : AccessibilityService() {
                     return@post
                 }
                 val messages = result.lineSequence().mapNotNull { line ->
-                    val clean = line.trim().trimStart('-', '•', ' ')
+                    // Models often emit markdown bullets or half-width colons;
+                    // dropping those lines used to silently lose whole bubbles.
+                    val clean = line.trim().trimStart('-', '•', ' ', '*', '#')
                     when {
-                        clean.startsWith("我：") -> Msg("me", clean.removePrefix("我：").trim())
-                        clean.startsWith("对方：") -> Msg("other", clean.removePrefix("对方：").trim())
+                        clean.startsWith("我：") || clean.startsWith("我:") ->
+                            Msg("me", clean.substring(2).trim())
+                        clean.startsWith("对方：") || clean.startsWith("对方:") ->
+                            Msg("other", clean.substring(3).trim())
                         else -> null
                     }
                 }.filter { it.text.isNotBlank() }.take(60).toList()
@@ -831,7 +854,7 @@ open class ChatCaptureService : AccessibilityService() {
             else Rect(0, 0, bmp.width, bmp.height)
         ocr.recognize(bmp, region) { lines ->
             runCatching { bmp.recycle() }
-            val msgs = groupOcrLines(lines)
+            val msgs = groupOcrLines(lines, resources.displayMetrics.widthPixels)
             val title = treeTitle?.takeIf { it.isNotBlank() }
                 ?: lines.firstOrNull()?.text?.trim()?.take(24)
             finishOcrSnapshot(ChatSnapshot(title, msgs, note = OCR_NOTE), pkg, manual, token)
@@ -840,30 +863,47 @@ open class ChatCaptureService : AccessibilityService() {
 
     /**
      * OCR lines → "bubbles": a gap larger than 1.2x the previous line's height
-     * starts a new one. Side is unknowable from a flat screen read, so every
-     * group is filed as the other person (and [OCR_NOTE] says so on the panel).
+     * starts a new one. Side is only a weak cue here (see [ocrLineIsMine]); the
+     * editable review screen remains the real authority.
      */
-    private fun groupOcrLines(lines: List<OcrLine>): List<Msg> {
+    private fun groupOcrLines(lines: List<OcrLine>, screenWidth: Int): List<Msg> {
         val usable = lines
             .filter { it.text.isNotBlank() && !PURE_TIME.matches(it.text.trim()) }
             .sortedBy { it.bounds.top }
         val out = ArrayList<Msg>()
         val buf = StringBuilder()
+        var firstLeft = 0
+        var firstRight = 0
+        var hasLine = false
         var prev: OcrLine? = null
+
+        fun flush() {
+            if (buf.isEmpty()) return
+            val side = if (hasLine && ocrLineIsMine(firstLeft, firstRight, screenWidth))
+                "me" else "other"
+            out.add(Msg(side, buf.toString()))
+            buf.setLength(0)
+            hasLine = false
+        }
+
         for (l in usable) {
             val p = prev
             if (p != null) {
                 val gap = l.bounds.top - p.bounds.bottom
-                val lineHeight = maxOf(p.bounds.height(), 1)
-                if (gap > lineHeight * 1.2f) {
-                    if (buf.isNotEmpty()) { out.add(Msg("other", buf.toString())); buf.setLength(0) }
-                }
+                if (gap > maxOf(p.bounds.height(), 1) * 1.2f) flush()
+            }
+            // Only the TOP line of a bubble defines its side. Wrapped lines are
+            // left-aligned inside the same bubble and would be misclassified.
+            if (!hasLine) {
+                firstLeft = l.bounds.left
+                firstRight = l.bounds.right
+                hasLine = true
             }
             if (buf.isNotEmpty()) buf.append(' ')
             buf.append(l.text.trim())
             prev = l
         }
-        if (buf.isNotEmpty()) out.add(Msg("other", buf.toString()))
+        flush()
         return out
     }
 
@@ -1095,7 +1135,7 @@ open class ChatCaptureService : AccessibilityService() {
         private const val BOTTOM_CROP = 0.84f
 
         /** Said on the panel whenever a snapshot came from flat-screen OCR. */
-        private const val OCR_NOTE = "OCR 未分边，把全部消息当作对方所说"
+        private const val OCR_NOTE = "本地 OCR 按气泡左右粗分说话人，长消息可能仍归对方；请逐行核对"
 
         private val PURE_TIME = Regex("""\d{1,2}[:：]\d{2}""")
         private val TAIL_TIME = Regex("""\d{1,2}[:：]\d{2}$""")

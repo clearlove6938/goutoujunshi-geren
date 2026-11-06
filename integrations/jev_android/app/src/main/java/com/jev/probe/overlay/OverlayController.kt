@@ -339,8 +339,10 @@ class OverlayController(private val ctx: Context) {
             val lines = editor.text.toString().lines().map { it.trim() }.filter { it.isNotEmpty() }
             val messages = lines.mapNotNull { line ->
                 when {
-                    line.startsWith("我：") -> Msg("me", line.removePrefix("我：").trim())
-                    line.startsWith("对方：") -> Msg("other", line.removePrefix("对方：").trim())
+                    line.startsWith("我：") || line.startsWith("我:") ->
+                        Msg("me", line.substring(2).trim())
+                    line.startsWith("对方：") || line.startsWith("对方:") ->
+                        Msg("other", line.substring(3).trim())
                     else -> null
                 }
             }
@@ -357,7 +359,7 @@ class OverlayController(private val ctx: Context) {
             }
         }
         setContent(listOf(line("核对本轮对话", "#24382d", 16f, true),
-            hint("识别结果可能有错。修改每行的“我／对方”和正文，确认后才调用分析模型。"),
+            hint("本地 OCR 只能按气泡左右粗分说话人：把你发的每一行改成“我：”开头，其余保持“对方：”。长消息最容易判错，确认后才调用分析模型。"),
             editor, confirm))
         if (!expanded) toggle()
         lp?.let { params ->
