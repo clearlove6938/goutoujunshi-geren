@@ -41,6 +41,34 @@ internal fun shouldIgnoreAccessibilityEvents(reviewPending: Boolean): Boolean = 
 internal fun shouldReviewOcr(manual: Boolean, autoAnalyze: Boolean, latestFrom: String?): Boolean =
     manual || (autoAnalyze && latestFrom == "other")
 
+/**
+ * Whether a foreground window must get an idle bubble parked on it.
+ *
+ * Adapted chat apps are the blind spot this fixes: their node ids drift
+ * between app builds (new QQ versions rename or obfuscate their views), so
+ * QQAdapter.extract() can return null on a perfectly good chat window. The old
+ * code simply returned, leaving no bubble at all — and the bubble menu's
+ * "截屏识别一次" is the ONLY way into an unreadable window, so a bubble that is
+ * gone cannot be tapped. Parking an idle bubble keeps the manual OCR path
+ * reachable no matter what the app's node tree looks like.
+ *
+ * Excluded are places where a bubble would only be in the way: our own screens,
+ * WeChat (unsupported on this Android preview), the launcher and system UI.
+ */
+internal fun shouldParkIdleBubble(
+    foregroundPackage: String?,
+    ownPackage: String,
+    wechatPackage: String,
+    bubbleShowing: Boolean
+): Boolean {
+    val pkg = foregroundPackage ?: return false
+    if (bubbleShowing) return false
+    if (pkg == ownPackage || pkg == wechatPackage) return false
+    if (pkg.contains("launcher", ignoreCase = true) ||
+        pkg == "com.miui.home" || pkg == "com.android.systemui") return false
+    return true
+}
+
 internal enum class ReviewConfirmationState {
     WAIT_FOR_CHAT_WINDOW,
     CHAT_CURRENT,
@@ -278,6 +306,13 @@ open class ChatCaptureService : AccessibilityService() {
                 else if (changed || overlay?.isShowing() != true) overlay?.showIdle(null)
                 return
             }
+            // Adapted apps: park the bubble up-front. maybeCapture() can still
+            // fail to read their node tree, and that must never leave the user
+            // with no way to tap the menu. When a ROM hands us no node tree at
+            // all, the event's package is the only name left — use it ONLY to
+            // decide whether to park a bubble, never to cancel work or hide one
+            // (an IME can be the event source while the chat stays foreground).
+            parkIdleBubble(fg ?: event.packageName?.toString())
         }
 
         when (type) {
@@ -285,6 +320,16 @@ open class ChatCaptureService : AccessibilityService() {
             AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED,
             AccessibilityEvent.TYPE_VIEW_SCROLLED -> maybeCapture()
         }
+    }
+
+    /** Keep the bubble tappable when an adapted app's node tree is unreadable.
+     *  Never replaces a bubble that is already showing (it may hold a live
+     *  judgment, review editor or candidate list). */
+    private fun parkIdleBubble(pkg: String?) {
+        if (!shouldParkIdleBubble(pkg, packageName, WECHAT_PACKAGE,
+                overlay?.isShowing() == true)) return
+        foregroundPkg = pkg
+        overlay?.showIdle(null)
     }
 
     private fun maybeCapture() {
@@ -306,7 +351,11 @@ open class ChatCaptureService : AccessibilityService() {
             return
         }
         // Only act inside a chat window (the adapter returns null elsewhere).
-        val rawSnapshot = adapter.extract(root, resources) ?: return
+        // A null result parks the idle bubble instead of returning: see
+        // shouldParkIdleBubble — the manual "截屏识别一次" menu is the fallback
+        // for exactly this case, and it needs a visible bubble to be tappable.
+        val rawSnapshot = adapter.extract(root, resources)
+        if (rawSnapshot == null) { parkIdleBubble(pkg); return }
         // Stabilize the title BEFORE anything below reads it: some apps (X) show
         // a transient "连接中…" title for a moment right after opening a thread.
         val snapshot = stabilizeTitle(pkg ?: "", rawSnapshot)
@@ -321,6 +370,10 @@ open class ChatCaptureService : AccessibilityService() {
         // WeChat hides them when the disguise fails) → screenshot + OCR, subject
         // to ScreenCapture's own >=1s throttle and failure backoff.
         if (snapshot.messages.isEmpty()) {
+            // The tree recognized a chat window but holds no text (Feishu draws
+            // its bodies, QQ can hide them). Show the bubble before the OCR path
+            // starts, so a slow or failing screenshot never leaves no bubble.
+            parkIdleBubble(pkg)
             if (prefs.ocrFallback) {
                 // Gate BEFORE the shot, not after the OCR. Feishu's tree is empty
                 // on every content-changed event, and a successful shot resets the

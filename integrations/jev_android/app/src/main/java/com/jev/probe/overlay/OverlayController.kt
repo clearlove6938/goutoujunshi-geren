@@ -117,7 +117,10 @@ class OverlayController(private val ctx: Context) {
         ).apply {
             gravity = Gravity.TOP or Gravity.START
             x = if (prefs.bubbleX in 0..(screenW - dp(52))) prefs.bubbleX else dp(8)
-            y = if (prefs.bubbleY >= 0) prefs.bubbleY else dp(150)
+            // Bound y as well as x: a position saved in a different orientation
+            // or display size can otherwise place the bubble off-screen, which
+            // looks exactly like "the overlay never appeared".
+            y = if (prefs.bubbleY in 0..(screenH - dp(120))) prefs.bubbleY else dp(150)
         }
         lp = params
 
