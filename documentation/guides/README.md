@@ -54,8 +54,8 @@ GOUTOU_SKILL_MODE=full ./start.command            # 在 integrations/jev_mac/ �
 
 ## APK 从哪拿
 
-- 本仓库 **Actions → `Platform preview packages` → `android` → artifact `goutoujunshi-jev-chat-android-debug`**。
-- 或本仓库 **Releases** 里附带的调试 APK。
+- **[v1.0-android-preview Release（推荐）](https://github.com/clearlove6938/goutoujunshi-geren/releases/tag/v1.0-android-preview)**：直接下载附件 `狗头军师-说话人修正版.apk`（27.2 MB），包含完整 Skill、悬浮球兜底与常驻、OCR 说话人分边。
+- 或本仓库 **Actions → `Platform preview packages` → `android` → artifact `goutoujunshi-jev-chat-android-debug`**（CI 重新跑过的版本，签名会与 Release 附件不同）。
 - ⚠️ 每次 CI 构建都会生成新的 debug keystore，**换版本必须先卸载旧版**（会清空本地设置）。若还没装过，直接装最新版即可。
 
 离线检查与 CI 不能替代真实设备、模型接口与聊天应用的兼容性测试。仓库主体采用 [MIT 许可证](../../LICENSE)。
