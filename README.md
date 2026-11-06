@@ -111,4 +111,4 @@ Android 调试 APK 可直接在 [本分支 Releases](https://github.com/clearlov
 
 仓库主体采用 [MIT 许可证](LICENSE)。第三方组件沿用各自许可，详见 [Mac LICENSE](integrations/jev_mac/vendor/LICENSE)、[Android NOTICE](integrations/jev_android/NOTICE) 与 [Windows NOTICE](integrations/jev_windows/NOTICE)。
 
-欢迎[提交问题或建议](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/issues)，也欢迎 [Star 收藏](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/stargazers)。加入升级打怪开源群：Email `247133278@qq.com` · WeChat `loonges` · QQ `247133278`。
+欢迎[提交问题或建议](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/issues)，也欢迎 [Star 收藏](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/stargazers)。

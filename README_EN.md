@@ -98,4 +98,4 @@ Configuration and development guides: [Mac](integrations/jev_mac/README.md) · [
 
 The main repository uses the [MIT License](LICENSE). Third-party components retain their own terms; see the [Mac LICENSE](integrations/jev_mac/vendor/LICENSE), [Android NOTICE](integrations/jev_android/NOTICE), and [Windows NOTICE](integrations/jev_windows/NOTICE).
 
-[Report an issue or suggest an improvement](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/issues), or [Star the project](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/stargazers). To join the 升级打怪 open-source community: Email `247133278@qq.com` · WeChat `loonges` · QQ `247133278`.
+[Report an issue or suggest an improvement](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/issues), or [Star the project](https://github.com/shengjidaguai-china/goutoujunshi-jev-chat/stargazers).
