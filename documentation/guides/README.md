@@ -55,7 +55,7 @@ GOUTOU_SKILL_MODE=full ./start.command            # 在 integrations/jev_mac/ �
 
 ## APK 从哪拿
 
-- **[v1.0-android-preview Release（推荐）](https://github.com/clearlove6938/goutoujunshi-geren/releases/tag/v1.0-android-preview)**：下载附件 [`goutoujunshi-android-debug-v1.0-speaker-fix.apk`](https://github.com/clearlove6938/goutoujunshi-geren/releases/download/v1.0-android-preview/goutoujunshi-android-debug-v1.0-speaker-fix.apk)（27.2 MB / SHA256 `f9ee19af…`）。附件名是 ASCII 安全名（GitHub 上传接口会剥掉中文名），内容与本机 `狗头军师-说话人修正版.apk` 完全相同，含完整 Skill、悬浮球兜底与常驻、OCR 说话人分边。
+- **[v1.0-android-preview Release（推荐）](https://github.com/clearlove6938/goutoujunshi-geren/releases/tag/v1.0-android-preview)**：下载附件 [`goutoujunshi-android-debug-latest.apk`](https://github.com/clearlove6938/goutoujunshi-geren/releases/download/v1.0-android-preview/goutoujunshi-android-debug-latest.apk)（附件始终替换为最新版）。当前是**微信截图实验版**，28,505,459 bytes，SHA256 `a06992788ff9780bf2fd1e97423ca84f18df13863dc59c0ea73aef5d49475690`，与本机 `狗头军师-微信截图版.apk` 是同一个文件。附件名用 ASCII 安全名（GitHub 上传接口会剥掉中文名）。含完整 Skill、悬浮球兜底与常驻、OCR 说话人分边，以及默认关的微信截图开关。
 - 或本仓库 **Actions → `Platform preview packages` → `android` → artifact `goutoujunshi-jev-chat-android-debug`**（CI 重新跑过的版本，签名会与 Release 附件不同）。
 - ⚠️ 每次 CI 构建都会生成新的 debug keystore，**换版本必须先卸载旧版**（会清空本地设置）。若还没装过，直接装最新版即可。
 

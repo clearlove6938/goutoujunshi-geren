@@ -1,6 +1,25 @@
 路线 B：推到 GitHub，Actions 出 APK
 
-【✅ 四次出包已完成 · 2026-11-06 22:02】说话人修正版（最新）
+【✅ 五次出包已完成 · 2026-11-07】微信截图实验版（最新）
+- 需求：微信里也能用截图识别。上游把微信挡在 4 处：窗口事件 drop、
+  ocrCaptureManual() 的 toast、未适配 App 补球排除、WeChatAdapter 未注册。
+- 改动 5 个 Kotlin 文件：Prefs.wechatCaptureEnabled（默认 false，key
+  wechat_capture_enabled）；SettingsActivity「分析」加开关与说明；MainActivity 文案；
+  ChatCaptureService 去掉硬拦截、事件层/补球/未适配分支改由开关控制、
+  微信固定走 CAPTURE_SYSTEM、externalCapture() 容忍 root == null；
+  ChatCaptureServiceTest +2 单测。
+- 设计取舍：不注册 WeChatAdapter（微信 8.0.52+ 隐藏节点文字），只做用户主动整屏截图；
+  系统截屏每次要授权；FLAG_SECURE 页面仍全黑；核对页仍是说话人唯一权威。
+- 本地 1378aac → REST 增量 → 远端 b17b2bee → Actions run #8 android success。
+- 交付：狗头军师-微信截图版.apk（28,505,459 bytes）
+  SHA256: a06992788ff9780bf2fd1e97423ca84f18df13863dc59c0ea73aef5d49475690
+- 核验：1029 entries，仅 classes6.dex + assets/goutou_skill/index.json 变化；
+  wechatCaptureEnabled / wechat_capture_enabled 已编入 dex；51 资源、6 场景、6000 不变。
+- Release v1.0-android-preview 附件已替换为 goutoujunshi-android-debug-latest.apk，
+  GitHub API 返回 digest 与本地 SHA256 一致。
+- 第 5 次签名变化（f1672fb4…）：仍要卸载重装、仍会清空本地设置与知识库。
+
+【✅ 四次出包已完成 · 2026-11-06 22:02】说话人修正版（历史）
 - 问题：每次识别都把「我」和对方的聊天全归成「对方」。
 - 根因：默认 ML Kit 本地 OCR 的 groupOcrLines() 把所有行硬编码为
   Msg("other", ...)（OCR_NOTE 原文「OCR 未分边，把全部消息当作对方所说」）；

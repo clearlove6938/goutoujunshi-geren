@@ -102,7 +102,7 @@ python3 -B -m unittest discover -s tests -q
 - [界面点击位置标注图](documentation/guides/README.md#github-界面点击位置标注图)：新建仓库、空仓库页、PAT sudo 二次验证三张截图
 - [路线 B 推送与出包操作卡](documentation/guides/路线B-推送与出包操作卡.txt)：纯文字命令与四次出包排错记录
 
-Android 调试 APK 可直接在 [本分支 Releases](https://github.com/clearlove6938/goutoujunshi-geren/releases) 下载，或由本仓库 Actions 的 `Platform preview packages` → `android` job 产出（artifact `goutoujunshi-jev-chat-android-debug`）。每次 CI 构建的 debug 签名不同，**换版本需先卸载旧版**，卸载会清除本地设置。最新版包含完整 Skill、悬浮球兜底与常驻开关、OCR 说话人分边。
+Android 调试 APK 可直接在 [本分支 Releases](https://github.com/clearlove6938/goutoujunshi-geren/releases) 下载，或由本仓库 Actions 的 `Platform preview packages` → `android` job 产出（artifact `goutoujunshi-jev-chat-android-debug`）。每次 CI 构建的 debug 签名不同，**换版本需先卸载旧版**，卸载会清除本地设置。最新版（[Release](https://github.com/clearlove6938/goutoujunshi-geren/releases/tag/v1.0-android-preview)）包含完整 Skill、悬浮球兜底与常驻开关、OCR 说话人分边，以及默认关闭的实验性微信截图开关。
 
 ## 贡献与致谢
 

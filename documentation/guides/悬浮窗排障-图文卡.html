@@ -126,15 +126,17 @@
     <tr><td><code class="inline">ChatCaptureServiceTest.kt</code></td><td>新增 3 个 Kotlin 单测：QQ / 飞书 / X 读不出树时仍应有球；自身界面、微信、桌面、系统 UI 不应补球；已有的球不被 idle 覆盖。</td></tr>
   </table>
   <div class="ok">本地验证：Python 全套 <strong>181 tests OK</strong>；<code class="inline">validate_skill.py passed</code>；提交 <code class="inline">8100b32</code>；离线 bundle 已重建并 <code class="inline">bundle verify</code> 通过（16 MB，完整历史）。Kotlin 编译由 GitHub Actions 验证。</div>
-  <div class="ok"><strong>已连续四次出包 <span class="tag">最新：说话人修正版</span></strong><br>
-  本机 git 端点被阻断，四次都走 <code class="inline">api.github.com</code> 的 REST Git Data API 增量推送：
+  <div class="ok"><strong>已连续五次出包 <span class="tag">最新：微信截图实验版</span></strong><br>
+  本机 git 端点被阻断，五次都走 <code class="inline">api.github.com</code> 的 REST Git Data API 增量推送：
   首版 <code class="inline">223473d0</code>（run #3）→ 悬浮球修复 <code class="inline">e2a1ef88</code>（run #4）
-  → 常驻开关 <code class="inline">3c54e8c4</code>（run #5）
-  → <strong>说话人归属 <code class="inline">cdccbe8d</code></strong>（run #6，BUILD SUCCESSFUL 2m04s）。
-  四次 CI 日志都确认 <code class="inline">:app:testDebugUnitTest</code> 已执行。<br>
-  最新交付：<strong>狗头军师-说话人修正版.apk</strong>（27.2 MB / 28,505,467 bytes，SHA256 <code class="inline">f9ee19af02e674c…</code>）。
-  包内核验：<code class="inline">classes3/5/6.dex</code> 三个 dex 变化，<code class="inline">ocrLineIsMine</code> 已编入
-  <code class="inline">classes6.dex</code>；51 个 Skill 资源、6 场景、6000 字预算保持不变。</div>
+  → 常驻开关 <code class="inline">3c54e8c4</code>（run #5）→ 说话人归属 <code class="inline">cdccbe8d</code>（run #6）
+  → <strong>微信截图开关 <code class="inline">b17b2bee</code></strong>（run #8，android job success）。
+  五次 CI 日志都确认 <code class="inline">:app:testDebugUnitTest</code> 已执行。<br>
+  最新交付：<strong>狗头军师-微信截图版.apk</strong>（27.2 MB / 28,505,459 bytes，SHA256 <code class="inline">a06992788ff9780b…</code>）。
+  包内核验：仅 <code class="inline">classes6.dex</code> 与 <code class="inline">assets/goutou_skill/index.json</code> 变化，
+  <code class="inline">wechatCaptureEnabled</code> / <code class="inline">wechat_capture_enabled</code> 已编入 dex；
+  51 个 Skill 资源、6 场景、6000 字预算保持不变。<br>
+  <strong>⚠️ 第五次签名又变了（f1672fb4…）：装之前必须卸载旧版，卸载会清空已填 Key 和知识库笔记。</strong></div>
 </section>
 
 <section>
@@ -161,7 +163,7 @@
 <section>
   <h2><span class="num">6</span>「悬浮球常驻」开关与保活</h2>
   <div class="ok"><strong>常驻开关已做好 <span class="tag">常驻版 APK 已出包</span></strong><br>
-  最新版 <strong>狗头军师-说话人修正版.apk</strong>（含常驻开关）在「设置 → 外观」最上方保留了
+  最新版 <strong>狗头军师-微信截图版.apk</strong>（含常驻开关与微信截图实验开关）在「设置 → 外观」最上方保留了
   <strong>「悬浮球常驻（任何界面都不自动隐藏）」</strong>，<strong>默认关闭</strong>。
   打开后桌面、系统界面、本 App 设置页、微信里都不再自动收球；白名单不匹配的会话只跳过分析、不收球。
   首页「助手已开启」总开关仍是最高优先级，关掉它球一定会消失。
@@ -219,10 +221,10 @@
   </table>
   <div class="note">建议继续用 <strong>「ML Kit 本地」</strong>：离线、不耗接口额度、中文识别稳，配好核对页就够了。选视觉模型的话，要确认那个模型<strong>真的支持图片输入</strong>，否则只会拿到一段凭空猜的文字。</div>
   <div class="warn">说话人判错会连带影响分析：<code class="inline">latest_from</code>、自动分析触发、候选回复的口吻样本都按「谁最后发言」算。所以核对页这步别跳过，改完再确认。</div>
-  <div class="ok">上述改进已打进 <strong>狗头军师-说话人修正版.apk</strong>（远端 <code class="inline">cdccbe8d</code> / run #6，SHA256 <code class="inline">f9ee19af02e674c…</code>）。但<strong>核对页仍然要人工过一遍</strong>：长气泡横跨大半屏时代码会保守地继续归「对方」，这是刻意设计，避免把对方的话错算成你自己的。</div>
+  <div class="ok">上述改进已打进最新版 <strong>狗头军师-微信截图版.apk</strong>（远端 <code class="inline">b17b2bee</code> / run #8，SHA256 <code class="inline">a06992788ff9780b…</code>）。但<strong>核对页仍然要人工过一遍</strong>：长气泡横跨大半屏时代码会保守地继续归「对方」，这是刻意设计，避免把对方的话错算成你自己的。</div>
 </section>
 
-<footer>悬浮窗排障图文卡 · 2026-11-06 22:02 更新（新增第 7 节「说话人判错」）· 本地 4e0e723 / 远端 cdccbe8d（CI run #6 通过）· 说话人修正版 APK SHA256 f9ee19af… · 单文件离线可打开，可直接打印对照手机操作</footer>
+<footer>悬浮窗排障图文卡 · 2026-11-07 更新（第 5 次出包：微信截图实验版）· 本地 1378aac / 远端 b17b2bee（CI run #8 通过）· 微信截图版 APK SHA256 a0699278… · 单文件离线可打开，可直接打印对照手机操作</footer>
 </div>
 </body>
 </html>

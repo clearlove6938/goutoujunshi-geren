@@ -60,8 +60,8 @@
 </header>
 
 <section>
-  <h2>当前状态：说话人修正版 APK 已产出 ✅</h2>
-  <div class="ok"><strong>全流程已跑通，并已四次出包。</strong>仓库 <code class="inline">clearlove6938/goutoujunshi-geren</code> 的 android job 连续四次编译通过。最新交付：<strong>狗头军师-说话人修正版.apk</strong>（27.2 MB / 28,505,467 bytes，SHA256 <code class="inline">f9ee19af02e674c…</code>），由远端提交 <code class="inline">cdccbe8d</code> / Actions run #6 产出：修复本地 OCR 把所有聊天行都归为「对方」的问题，并保留此前的悬浮球修复与常驻开关。日志确认 <code class="inline">:app:testDebugUnitTest :app:assembleDebug</code> → <code class="inline">BUILD SUCCESSFUL in 2m 4s</code>。<br>包内 <code class="inline">classes3/5/6.dex</code> 变化且含 <code class="inline">ocrLineIsMine</code>，51 个 <code class="inline">assets/goutou_skill/</code> 资源、6 个场景、6000 字预算、arm64-v8a 全部保持不变。<br><strong>⚠️ 四次构建的 debug 签名两两不同（67ec51c7… / c9d665ef… / 9cefeed9… / d057eed3…），每次换包都必须先卸载旧版，也都会清空本地设置（密钥、笔记、联系人）。还没装旧版的话直接装最新这版即可。</strong>详见《悬浮窗排障-图文卡.html》第 7 节。</div>
+  <h2>当前状态：微信截图实验版 APK 已产出 ✅</h2>
+  <div class="ok"><strong>全流程已跑通，并已五次出包。</strong>仓库 <code class="inline">clearlove6938/goutoujunshi-geren</code> 的 android job 连续五次编译通过。最新交付：<strong>狗头军师-微信截图版.apk</strong>（27.2 MB / 28,505,459 bytes，SHA256 <code class="inline">a06992788ff9780b…</code>），由远端提交 <code class="inline">b17b2bee</code> / Actions run #8 产出：新增<strong>默认关闭的实验性微信截图开关</strong>（设置 → 分析 → 允许微信截图），放开上游 4 处拦截，微信固定走系统截屏授权 + 整屏本地 OCR；同时保留此前的完整 Skill、悬浮球兜底、常驻开关与 OCR 说话人分边。日志确认 <code class="inline">:app:testDebugUnitTest :app:assembleDebug</code> 通过。<br>包内核验：仅 <code class="inline">classes6.dex</code> 与 <code class="inline">assets/goutou_skill/index.json</code> 变化，<code class="inline">wechatCaptureEnabled</code> / <code class="inline">wechat_capture_enabled</code> 已编入 dex；51 个 Skill 资源、6 个场景、6000 字预算全部保持不变。<br><strong>⚠️ 五次构建的 debug 签名两两不同（67ec51c7… / c9d665ef… / 9cefeed9… / d057eed3… / f1672fb4…），每次换包都必须先卸载旧版，也都会清空本地设置（密钥、笔记、联系人）。还没装旧版的话直接装最新这版即可。</strong>详见《悬浮窗排障-图文卡.html》第 7 节。</div>
   <div class="note">以下两段是首次推送时的过程记录，网络与认证问题后来已用 REST Git Data API 全部绕开，<strong>不需要再做一遍</strong>。</div>
   <div class="ok"><strong>（历史记录）GET 已恢复，但 push 仍不稳。</strong>实测 <code class="inline">git ls-remote</code> 能读到官方仓库 HEAD、目标空仓库 HTTPS 端点 200；但 <code class="inline">git push</code> 是 POST 大包：走代理报 <code class="inline">CONNECT tunnel failed 502</code> / <code class="inline">Empty reply from server</code>，去掉代理直连有时能走到认证、有时 21 秒超时。<strong>网络不是唯一障碍，认证也还缺。</strong>bundle 保留为「换机」方案。</div>
   <p>本地工作仓库 <code class="inline">goutoujunshi-jev-chat</code> 已初始化并提交（<code class="inline">1bc4980</code>，440 个文件，工作树干净），<strong>目前没有任何 remote</strong>。GitHub 侧空仓库已建好：<code class="inline">clearlove6938/goutoujunshi-geren</code>，三项初始化都没勾，符合「空仓库」要求。</p>
@@ -184,7 +184,7 @@ git push -u origin main</code></pre></div>
 
 <section>
   <h2><span class="num">5</span>装到手机，打开开关</h2>
-  <p>最新版 APK 已下载到本机 <code class="inline">狗头军师-说话人修正版.apk</code>（27.2 MB / SHA256 <code class="inline">f9ee19af02e674c…</code>），旧版分别保留为 <code class="inline">app-debug-prev.apk</code> / <code class="inline">app-debug-prev2.apk</code> / <code class="inline">app-debug-prev3.apk</code>。把它传到手机（微信发给自己、数据线或手机浏览器），允许「安装未知来源应用」。要求 <strong>Android 11+、ARM64</strong>。<strong>注意：新版与首版 debug 签名不同，必须先卸载旧版，且会清空本地设置。</strong></p>
+  <p>最新版 APK 已下载到本机 <code class="inline">狗头军师-微信截图版.apk</code>（27.2 MB / SHA256 <code class="inline">a06992788ff9780b…</code>），旧版分别保留为 <code class="inline">app-debug-prev.apk</code> / <code class="inline">app-debug-prev2.apk</code> / <code class="inline">app-debug-prev3.apk</code>。把它传到手机（微信发给自己、数据线或手机浏览器），允许「安装未知来源应用」。要求 <strong>Android 11+、ARM64</strong>。<strong>注意：新版与首版 debug 签名不同，必须先卸载旧版，且会清空本地设置。</strong></p>
   <div class="figure">
     <svg viewBox="0 0 680 250" role="img" aria-label="手机设置页开启完整 Skill 开关示意图">
       <rect x="238" y="12" width="204" height="226" rx="24" fill="#FFFFFF" stroke="#5F5E5A" stroke-width="2"/>
@@ -243,7 +243,7 @@ git push -u origin main</code></pre></div>
   <p style="color:var(--sub);font-size:14px">Jev 的英文判断题保持不动——那套题面经过校准，只增强回复生成层。上游 Skill 原文里「不写工作区 / 数据不外发 / 不联网」是本地 Codex Skill 的边界，注入前会追加移动端适配声明，明确截图与模型调用由 App 完成，JSON 输出契约优先。</p>
 </section>
 
-<footer>路线 B 图文教程 · 2026-11-06 22:02 更新 · 仓库 clearlove6938/goutoujunshi-geren（最新提交 cdccbe8d，CI run #6）· 说话人修正版 APK 27.2 MB / SHA256 f9ee19af… · 单文件离线可打开</footer>
+<footer>路线 B 图文教程 · 2026-11-07 更新 · 仓库 clearlove6938/goutoujunshi-geren（最新提交 b17b2bee，CI run #8）· 微信截图版 APK 27.2 MB / SHA256 a0699278… · 单文件离线可打开</footer>
 </div>
 <script>
 function cp(btn){
